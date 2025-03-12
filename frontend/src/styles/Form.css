@@ -31,7 +31,7 @@
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
   }
-  
+  /*when hovering it turns blue*/
   .form-button:hover {
     background-color: #0056b3;
   }
