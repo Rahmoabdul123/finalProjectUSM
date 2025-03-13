@@ -97,12 +97,29 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+from configparser import ConfigParser
+import os
+
+# Load config.ini file
+config = ConfigParser()
+config_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'config.ini')
+print(f"Config path: {config_path}")  # Debug line
+config.read(config_path)
+print(f"Config sections: {config.sections()}")  # Should output ['database']
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config.get('database', 'NAME', fallback='default_db'),
+        'USER': config.get('database', 'USER', fallback='postgres'),
+        'PASSWORD': config.get('database', 'PASSWORD', fallback=''),
+        'HOST': config.get('database', 'HOST', fallback='localhost'),
+        'PORT': config.get('database', 'PORT', fallback='5432'),
     }
 }
+
+
+
 
 
 # Password validation
