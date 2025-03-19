@@ -2,11 +2,11 @@ import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
-import "../styles/Form.css"
+import "../styles/Form.css";
 import LoadingIndicator from "./LoadingIndicator";
 
 function Form({ route, method }) {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");  // ✅ Use email instead of username
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -18,18 +18,31 @@ function Form({ route, method }) {
         e.preventDefault();
 
         try {
-            const res = await api.post(route, { username, password })
+            const res = await api.post(route, { email, password }); // ✅ Change `username` to `email`
+
             if (method === "login") {
+                // ✅ Save Tokens
                 localStorage.setItem(ACCESS_TOKEN, res.data.access);
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                navigate("/")
+
+                // ✅ Save User Role & University
+                localStorage.setItem("role", res.data.role);
+                localStorage.setItem("university", res.data.university);
+
+                // ✅ Redirect Based on Role
+                if (res.data.role === "Admin") {
+                    navigate("/admin-dashboard");
+                } else {
+                    navigate("/student-dashboard");
+                }
             } else {
-                navigate("/login")
+                navigate("/login"); // After registration, go to login
             }
         } catch (error) {
-            alert(error)
+            alert("Login failed. Please check your credentials.");
+            console.error(error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
 
@@ -38,10 +51,11 @@ function Form({ route, method }) {
             <h1>{name}</h1>
             <input
                 className="form-input"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username"
+                type="email"  // ✅ Use email field
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email"
+                required
             />
             <input
                 className="form-input"
@@ -49,6 +63,7 @@ function Form({ route, method }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
+                required
             />
             {loading && <LoadingIndicator />}
             <button className="form-button" type="submit">
@@ -58,4 +73,4 @@ function Form({ route, method }) {
     );
 }
 
-export default Form
+export default Form;

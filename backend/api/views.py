@@ -1,13 +1,29 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model, authenticate
 from rest_framework import generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import University, Note
 from .serializers import UserSerializer, UniversitySerializer, NoteSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 User = get_user_model()  # ✅ Ensure Django uses the custom User model
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_dashboard(request):
+    """✅ Returns different responses for Admins & Students"""
+    user = request.user
+    if user.role == "Admin":
+        return Response({"message": "Welcome, Admin!", "dashboard": "/admin-dashboard"})
+    else:
+        return Response({"message": "Welcome, Student!", "dashboard": "/student-dashboard"})
+ 
 
 # ✅ 1. List Universities API (For Registration Dropdown)
 @api_view(["GET"])
