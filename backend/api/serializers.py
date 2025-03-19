@@ -5,7 +5,7 @@ from .models import Note, University
 
 User = get_user_model()  
 
-# ✅ University Serializer
+
 class UniversitySerializer(serializers.ModelSerializer):
     class Meta:
         model = University
