@@ -3,7 +3,9 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import "../styles/Form.css";
+
 import LoadingIndicator from "./LoadingIndicator";
+import { Link } from "react-router-dom";
 
 function Form({ route, method }) {
     const [firstName, setFirstName] = useState("");
@@ -11,12 +13,11 @@ function Form({ route, method }) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [university, setUniversity] = useState("");
-    const [universities, setUniversities] = useState([]);  // ✅ Store universities
+    const [universities, setUniversities] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // ✅ Fetch universities when the component loads
         async function fetchUniversities() {
             try {
                 const res = await api.get("/api/universities/");
@@ -35,14 +36,14 @@ function Form({ route, method }) {
         e.preventDefault();
 
         try {
-            const payload = { 
-                first_name: firstName,  // ✅ Send first & last name
+            const payload = {
+                first_name: firstName,
                 last_name: lastName,
-                email, 
+                email,
                 password,
                 university
             };
-            
+
             const res = await api.post(route, payload);
 
             if (method === "login") {
@@ -68,71 +69,96 @@ function Form({ route, method }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="form-container">
-            <h1>{name}</h1>
+        <div className="form-layout">
+            {/* Left side - Form */}
+            <div className="form-left">
+                <form onSubmit={handleSubmit} className="form-container">
+                    <img src="/images/USMLogo.png" alt="USM Logo" className="logo" />
+                    <h1>{name}</h1>
 
-            {method === "register" && (
-                <>
+                    {method === "register" && (
+                        <>
+                            <input
+                                className="form-input"
+                                type="text"
+                                value={firstName}
+                                onChange={(e) => setFirstName(e.target.value)}
+                                placeholder="First Name"
+                                required
+                            />
+                            <input
+                                className="form-input"
+                                type="text"
+                                value={lastName}
+                                onChange={(e) => setLastName(e.target.value)}
+                                placeholder="Last Name"
+                                required
+                            />
+                        </>
+                    )}
+
                     <input
                         className="form-input"
-                        type="text"
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                        placeholder="First Name"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
                         required
                     />
                     <input
                         className="form-input"
-                        type="text"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        placeholder="Last Name"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
                         required
                     />
-                </>
-            )}
 
-            <input
-                className="form-input"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                required
-            />
-            <input
-                className="form-input"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                required
-            />
+                    {method === "register" && (
+                        <select
+                            className="form-input"
+                            value={university}
+                            onChange={(e) => setUniversity(e.target.value)}
+                            required
+                        >
+                            <option value="">Select a University</option>
+                            {universities.map((uni) => (
+                                <option key={uni.id} value={uni.id}>
+                                    {uni.name}
+                                </option>
+                            ))}
+                        </select>
+                    )}
 
-            {method === "register" && (
-                <select
-                    className="form-input"
-                    value={university}
-                    onChange={(e) => setUniversity(e.target.value)}
-                    required
-                >
-                    <option value="">Select a University</option>
-                    {universities.map((uni) => (
-                        <option key={uni.id} value={uni.id}>
-                            {uni.name}
-                        </option>
-                    ))}
-                </select>
-            )}
+                    {loading && <LoadingIndicator />}
+                    <button className="form-button" type="submit">
+                        {name}
+                    </button>
 
-            {loading && <LoadingIndicator />}
-            <button className="form-button" type="submit">
-                {name}
-            </button>
-        </form>
+                    {method === "login" && (
+                        <p className="register-link">
+                            Don’t have an account? <Link to="/register">Register here</Link>
+                        </p>
+                    )}
+
+                    {method === "register" && (
+                        <p className="register-link">
+                            Have an account? <Link to="/login">Login here</Link>
+                        </p>
+                    )}
+                </form>
+            </div>
+
+            {/* Right side - Image */}
+            <div className="form-right">
+                <img src="/images/hockeyGirl.png" alt="Hockey" className="hockey-image" />
+            </div>
+        </div>
     );
 }
 
 export default Form;
+
+
 
 
