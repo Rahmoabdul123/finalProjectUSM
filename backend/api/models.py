@@ -61,7 +61,7 @@ class User(AbstractUser):
 
 
 
-#  Test Model (Optional: You Can Use This for Testing Redirection)
+#testing
 class Note(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
@@ -70,3 +70,39 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Sport(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+class Team(models.Model):
+    name = models.CharField(max_length=100)
+    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="teams")
+    sport = models.ForeignKey(Sport, on_delete=models.CASCADE, related_name="teams")
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.sport.name} ({self.university.name})"
+
+class TeamMembership(models.Model): #Approval status
+    STATUS_CHOICES = [
+        ("Pending", "Pending"),
+        ("Approved", "Approved"),
+        ("Rejected", "Rejected"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="team_memberships")
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="members")
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Pending")
+    position = models.CharField(max_length=50, blank=True)
+    goals_scored = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user} -> {self.team} ({self.status})"
+    
+class Meta:
+    unique_together = ('user', 'team') # ensure they don't request the same team more than once.
+
+
