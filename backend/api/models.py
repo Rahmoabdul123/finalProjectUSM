@@ -77,6 +77,7 @@ class Sport(models.Model):
     def __str__(self):
         return self.name
 
+#My Teams database table
 class Team(models.Model):
     name = models.CharField(max_length=100)
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="teams")
@@ -85,6 +86,8 @@ class Team(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.sport.name} ({self.university.name})"
+
+#My TeamMembership
 
 class TeamMembership(models.Model): #Approval status
     STATUS_CHOICES = [

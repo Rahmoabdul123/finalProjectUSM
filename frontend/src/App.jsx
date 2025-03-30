@@ -7,6 +7,7 @@ import NotFound from "./pages/NotFound"
 import AdminDashboard from "./pages/AdminDashboard";  //  Admin Page
 import StudentDashboard from "./pages/StudentDashboard";  //  Student Page
 import ProtectedRoute from "./components/ProtectedRoute"
+import JoinTeam from "./pages/findTeam"; //joining a team page
 
 function Logout() {
   localStorage.clear()
@@ -22,7 +23,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ✅ Default Protected Home Route */}
+        {/* Default Protected Home Route */}
         <Route
           path="/"
           element={
@@ -32,7 +33,7 @@ function App() {
           }
         />
 
-        {/* ✅ Admin Dashboard (Only for Admins) */}
+        {/*  Admin Dashboard (Only for Admins) */}
         <Route
           path="/admin-dashboard"
           element={
@@ -42,7 +43,7 @@ function App() {
           }
         />
 
-        {/* ✅ Student Dashboard (Only for Students) */}
+        {/*  Student Dashboard (Only for Students) */}
         <Route
           path="/student-dashboard"
           element={
@@ -63,6 +64,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/join-team"
+          element={
+            <ProtectedRoute requiredRole="Student">
+              <JoinTeam />
+            </ProtectedRoute>
+          }
+        />
+        
       </Routes>
     </BrowserRouter>
   )

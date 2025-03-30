@@ -4,10 +4,12 @@ from rest_framework import generics
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import University, Note
-from .serializers import UserSerializer, UniversitySerializer, NoteSerializer
+from .models import University, Note,Team,TeamMembership
+from .serializers import UserSerializer, UniversitySerializer, NoteSerializer,TeamSerializer,TeamMembershipSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
+from .models import Sport
+from .serializers import SportSerializer
 
 User = get_user_model()
 
@@ -58,4 +60,82 @@ class NoteDelete(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Note.objects.filter(author=self.request.user)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def teams_by_university(request):
+    university = request.user.university
+    sport = request.GET.get('sport')  # optional filter
 
+    teams = Team.objects.filter(university=university)
+
+    if sport:
+        teams = teams.filter(sport__name=sport)
+
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def request_join_team(request, team_id):
+    team = Team.objects.get(id=team_id)
+
+    # Check university match
+    if request.user.university != team.university:
+        return Response({"detail": "You can only join teams from your university."}, status=403)
+
+    # Check for duplicates
+    if TeamMembership.objects.filter(user=request.user, team=team).exists():
+        return Response({"detail": "You already requested or joined this team."}, status=400)
+
+    TeamMembership.objects.create(user=request.user, team=team, status="Pending")
+    return Response({"detail": "Join request submitted."})
+
+# Ensuring admins can be the only one seeing the request
+api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def pending_join_requests(request):
+    if request.user.role != "Admin":
+        return Response({"detail": "Only admins can view requests."}, status=403)
+
+    university = request.user.university
+
+    requests = TeamMembership.objects.filter(
+        team__university=university,
+        status="Pending"
+    )
+
+    serializer = TeamMembershipSerializer(requests, many=True)
+    return Response(serializer.data)
+
+#Lists all of the sports team
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_sports(request):
+    sports = Sport.objects.all()
+    serializer = SportSerializer(sports, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def handle_join_request(request, membership_id):
+    if request.user.role != "Admin":
+        return Response({"detail": "Only admins can manage requests."}, status=403)
+
+    try:
+        membership = TeamMembership.objects.get(id=membership_id, team__university=request.user.university)
+    except TeamMembership.DoesNotExist:
+        return Response({"detail": "Request not found."}, status=404)
+
+    action = request.data.get("action")
+
+    if action not in ["Approve", "Reject"]:
+        return Response({"detail": "Invalid action."}, status=400)
+
+    membership.status = action
+    membership.save()
+
+    return Response({"detail": f"Request {action.lower()}ed successfully."})

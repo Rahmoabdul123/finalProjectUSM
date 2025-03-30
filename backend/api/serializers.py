@@ -67,7 +67,7 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = ["id", "name", "university", "sport", "created_by"]
 
-# Team Membership Serializer (for viewing teammates, score tracking, etc.)
+# Team Membership Serializer (for viewing teammates, score tracking)
 class TeamMembershipSerializer(serializers.ModelSerializer):
     user_full_name = serializers.SerializerMethodField()
 
@@ -83,3 +83,4 @@ class TeamMembershipCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamMembership
         fields = ["team"]
+
