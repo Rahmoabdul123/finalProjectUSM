@@ -13,9 +13,11 @@ from .serializers import SportSerializer
 
 User = get_user_model()
 
+# Custom token view to return extra user data along with the JWT token
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+# Dashboard route that returns a different message for Admins and Students
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def user_dashboard(request):
@@ -27,15 +29,15 @@ def user_dashboard(request):
         return Response({"message": "Welcome, Student!", "dashboard": "/student-dashboard"})
  
 
-
+# Public endpoint to list all universities
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([AllowAny]) # Allow any to make it public
 def list_universities(request):
     universities = University.objects.all()
     serializer = UniversitySerializer(universities, many=True)
     return Response(serializer.data)
 
-
+# Endpoint to allow user registration (sign-up)
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -61,11 +63,12 @@ class NoteDelete(generics.DestroyAPIView):
     def get_queryset(self):
         return Note.objects.filter(author=self.request.user)
     
+# Get teams based on user's university and optional sport filter
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def teams_by_university(request):
     university = request.user.university
-    sport = request.GET.get('sport')  # optional filter
+    sport = request.GET.get('sport')  # optional filter to choose the sports
 
     teams = Team.objects.filter(university=university)
 
@@ -76,23 +79,25 @@ def teams_by_university(request):
     return Response(serializer.data)
 
 
+# Student requests to join a team
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def request_join_team(request, team_id):
     team = Team.objects.get(id=team_id)
 
-    # Check university match
+    # checks the students belong to the same university
     if request.user.university != team.university:
         return Response({"detail": "You can only join teams from your university."}, status=403)
 
-    # Check for duplicates
+    # Check and prevents duplicates
     if TeamMembership.objects.filter(user=request.user, team=team).exists():
         return Response({"detail": "You already requested or joined this team."}, status=400)
-
+    
+    # Create a pending join request
     TeamMembership.objects.create(user=request.user, team=team, status="Pending")
     return Response({"detail": "Join request submitted."})
 
-# Ensuring admins can be the only one seeing the request
+# Ensuring admins can be the only one seeing the request and view to list all pending join requests for their university
 api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def pending_join_requests(request):
@@ -109,8 +114,8 @@ def pending_join_requests(request):
     serializer = TeamMembershipSerializer(requests, many=True)
     return Response(serializer.data)
 
-#Lists all of the sports team
 
+#Lists all of the sports team
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_sports(request):
@@ -118,7 +123,7 @@ def list_sports(request):
     serializer = SportSerializer(sports, many=True)
     return Response(serializer.data)
 
-
+# Admin action to approve or reject a join request
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def handle_join_request(request, membership_id):

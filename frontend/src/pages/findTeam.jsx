@@ -3,12 +3,13 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import StudentHeader from "../components/studentHeader";
 
-function findTeam() {
+function FindTeam() {
   const [teams, setTeams] = useState([]);
   const [sports, setSports] = useState([]);
   const [selectedSport, setSelectedSport] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     fetchTeams();
@@ -37,22 +38,21 @@ function findTeam() {
     }
   };
 
-  const requestToJoin = async (teamId) => {
+  const handleJoinRequest = async (teamId) => {
     try {
-      await api.post(`/api/teams/${teamId}/request-join/`);
+      const response = await api.post(`/api/teams/${teamId}/join/`);
+      setMessage(response.data.detail);
       alert("Join request submitted.");
-      fetchTeams();
     } catch (error) {
-      alert("Failed to send request.");
-      console.error(error);
+      setMessage(error.response?.data?.detail || "An error occurred.");
+      alert("Failed to send join request.");
     }
   };
 
   return (
-    
     <div className="p-4">
-        <StudentHeader />
-        
+      <StudentHeader />
+
       <h1 className="text-2xl font-bold mb-4">Teams at Your University</h1>
 
       <select
@@ -62,7 +62,9 @@ function findTeam() {
       >
         <option value="">All Sports</option>
         {sports.map((sport) => (
-          <option key={sport.id} value={sport.name}>{sport.name}</option>
+          <option key={sport.id} value={sport.name}>
+            {sport.name}
+          </option>
         ))}
       </select>
 
@@ -76,7 +78,7 @@ function findTeam() {
               <p className="text-sm text-gray-600 mb-2">Sport: {team.sport.name}</p>
               <p className="text-sm text-gray-600 mb-4">University: {team.university.name}</p>
               <button
-                onClick={() => requestToJoin(team.id)}
+                onClick={() => handleJoinRequest(team.id)}
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
                 Request to Join
@@ -85,8 +87,14 @@ function findTeam() {
           ))}
         </div>
       )}
+
+      {message && (
+        <div className="mt-4 p-2 bg-yellow-100 text-yellow-800 rounded">
+          {message}
+        </div>
+      )}
     </div>
   );
 }
 
-export default findTeam;
+export default FindTeam;

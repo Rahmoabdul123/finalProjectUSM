@@ -9,4 +9,5 @@ urlpatterns = [
     path("join-requests/", views.pending_join_requests),
     path('teams/<int:team_id>/join/', request_join_team),
     path("handle-request/<int:membership_id>/", views.handle_join_request),
+    path("pending-join-requests/", views.pending_join_requests, name="pending-join-requests"),
 ]

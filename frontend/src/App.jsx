@@ -8,6 +8,7 @@ import AdminDashboard from "./pages/AdminDashboard";  //  Admin Page
 import StudentDashboard from "./pages/StudentDashboard";  //  Student Page
 import ProtectedRoute from "./components/ProtectedRoute"
 import JoinTeam from "./pages/findTeam"; //joining a team page
+import PendingRequest from "./pages/PendingRequest"
 
 function Logout() {
   localStorage.clear()
@@ -69,6 +70,14 @@ function App() {
           element={
             <ProtectedRoute requiredRole="Student">
               <JoinTeam />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/pending-join-requests"
+          element={
+            <ProtectedRoute requiredRole="Admin">
+              <PendingRequest />
             </ProtectedRoute>
           }
         />

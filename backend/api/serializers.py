@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import Note, University, TeamMembership, Team, Sport
 
-User = get_user_model()  
+User = get_user_model()  # Get the custom user model
 
 
 class UniversitySerializer(serializers.ModelSerializer):
@@ -11,8 +11,9 @@ class UniversitySerializer(serializers.ModelSerializer):
         model = University
         fields = ["id", "name", "location"]
 
+# Serializer for the custom User model
 class UserSerializer(serializers.ModelSerializer):
-    university = serializers.PrimaryKeyRelatedField(queryset=University.objects.all())
+    university = serializers.PrimaryKeyRelatedField(queryset=University.objects.all()) #link to university by ID
 
     class Meta:
         model = User
@@ -20,14 +21,14 @@ class UserSerializer(serializers.ModelSerializer):
 
         extra_kwargs = {
             "password": {"write_only": True},
-            "role": {"read_only": True},
+            "role": {"read_only": True}, #Don't want the users to choose their roles , needs to be read only
         }
 
     def create(self, validated_data):
         """ Uses the properly overridden `create_user()` method"""
         return User.objects.create_user(**validated_data)
 
-
+# Custom token serializer to include additional user info in JWT response
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
@@ -46,6 +47,7 @@ class NoteSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "content", "created_at", "author"]
         extra_kwargs = {"author": {"read_only": True}}
 
+# Serializer for Sport model
 class SportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sport
