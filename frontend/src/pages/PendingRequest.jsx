@@ -1,30 +1,44 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 import AdminHeader from "../components/AdminNavi";
+import { useNavigate } from "react-router-dom";
 
 function PendingRequest() {
+  console.log(" PendingRequest loaded");
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); 
 
   useEffect(() => {
+    console.log(" useEffect triggered!");
     fetchRequests();
   }, []);
 
   const fetchRequests = async () => {
+    console.log(" TRYING TO FETCH FROM API...");
     try {
       const res = await api.get("/api/pending-join-requests/");
+      console.log(" RESPONSE RECEIVED:", res.data);
       setRequests(res.data);
     } catch (error) {
-      console.error("Failed to fetch requests", error);
+      console.error(" ERROR FETCHING REQUESTS", error);
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleAction = async (id, action) => {
     try {
-      await api.post(`/api/handle-join-request/${id}/`, { action });
-      fetchRequests();
+      const res = await api.post(`/api/handle-request/${id}/`, { action });
+  
+      if (action === "Approve" && res.data.team) {
+        const team = res.data.team;
+        // Navigate to welcome page and pass team info
+        navigate(`/team-homepage`, { state: { team } });
+      } else {
+        fetchRequests();
+      }
     } catch (error) {
       console.error("Action failed", error);
     }

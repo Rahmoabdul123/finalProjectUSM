@@ -9,6 +9,7 @@ import StudentDashboard from "./pages/StudentDashboard";  //  Student Page
 import ProtectedRoute from "./components/ProtectedRoute"
 import JoinTeam from "./pages/findTeam"; //joining a team page
 import PendingRequest from "./pages/PendingRequest"
+import TeamHomepage from "./pages/TeamHomepage"
 
 function Logout() {
   localStorage.clear()
@@ -81,6 +82,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/team-homepage"
+          element={
+            <ProtectedRoute requiredRole="Student">
+              <TeamHomepage/>
+            </ProtectedRoute>
+          }
+        />
+
+
+        
         
       </Routes>
     </BrowserRouter>

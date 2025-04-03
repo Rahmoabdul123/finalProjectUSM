@@ -72,10 +72,11 @@ class TeamSerializer(serializers.ModelSerializer):
 # Team Membership Serializer (for viewing teammates, score tracking)
 class TeamMembershipSerializer(serializers.ModelSerializer):
     user_full_name = serializers.SerializerMethodField()
+    team_name = serializers.CharField(source="team.name", read_only=True)
 
     class Meta:
         model = TeamMembership
-        fields = ["id", "user_full_name", "position", "goals_scored", "status"]
+        fields = ["id", "user_full_name","team_name", "position", "goals_scored", "status"]
 
     def get_user_full_name(self, obj):
         return f"{obj.user.first_name} {obj.user.last_name}"

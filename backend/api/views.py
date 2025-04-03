@@ -98,12 +98,12 @@ def request_join_team(request, team_id):
     return Response({"detail": "Join request submitted."})
 
 # Ensuring admins can be the only one seeing the request and view to list all pending join requests for their university
-api_view(['GET'])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def pending_join_requests(request):
     if request.user.role != "Admin":
         return Response({"detail": "Only admins can view requests."}, status=403)
-
+        
     university = request.user.university
 
     requests = TeamMembership.objects.filter(
@@ -142,5 +142,11 @@ def handle_join_request(request, membership_id):
 
     membership.status = action
     membership.save()
+    
+    if action == "Approve":
+        team_data = TeamSerializer(membership.team).data
+        return Response({"detail": "Request approved.", "team": team_data})
+
+    return Response({"detail": "Request rejected."})
 
     return Response({"detail": f"Request {action.lower()}ed successfully."})
