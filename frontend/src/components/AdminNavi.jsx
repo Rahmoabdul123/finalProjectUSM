@@ -36,6 +36,13 @@ const AdminNavi = () => {
               <Link to="/all-fixtures" className="block px-4 py-2 hover:bg-gray-100">All Fixtures</Link>
             </div>
           </div>
+
+          <div className="relative group">
+            <button className="hover:text-gray-300">Profile</button>
+            <div className="absolute left-0 hidden group-hover:block bg-white text-black mt-2 rounded shadow-lg w-48">
+              <Link to="/logout" className="block px-4 py-2 hover:bg-gray-100">Logout</Link>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
