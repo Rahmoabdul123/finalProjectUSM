@@ -11,7 +11,6 @@ from .serializers import CustomTokenObtainPairSerializer
 from .models import Sport
 from .serializers import SportSerializer
 from rest_framework.views import APIView
-from rest_framework import status
 
 User = get_user_model()
 
