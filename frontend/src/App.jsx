@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import JoinTeam from "./pages/findTeam"; //joining a team page
 import PendingRequest from "./pages/PendingRequest"
 import TeamHomepage from "./pages/TeamHomepage"
+import MyTeams from "./pages/MyTeams"
 
 function Logout() {
   localStorage.clear()
@@ -25,7 +26,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Default Protected Home Route */}
+        {/* Default Protected Home Route 
         <Route
           path="/"
           element={
@@ -34,6 +35,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        */}
 
         {/*  Admin Dashboard (Only for Admins) */}
         <Route
@@ -90,6 +92,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/my-teams"
+          element={
+            <ProtectedRoute requiredRole="Student">
+              <MyTeams/>
+            </ProtectedRoute>
+          }
+        />
+        
 
 
         

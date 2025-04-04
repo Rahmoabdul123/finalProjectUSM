@@ -30,19 +30,15 @@ function PendingRequest() {
 
   const handleAction = async (id, action) => {
     try {
-      const res = await api.post(`/api/handle-request/${id}/`, { action });
+      await api.post(`/api/handle-request/${id}/`, { action });
   
-      if (action === "Approve" && res.data.team) {
-        const team = res.data.team;
-        // Navigate to welcome page and pass team info
-        navigate(`/team-homepage`, { state: { team } });
-      } else {
-        fetchRequests();
-      }
+      // Refresh the list after approval or rejection
+      fetchRequests();
     } catch (error) {
       console.error("Action failed", error);
     }
   };
+  
 
   return (
     <div className="p-4">

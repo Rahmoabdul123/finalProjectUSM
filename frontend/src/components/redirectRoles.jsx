@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 
-function redirectRole() {
+function RedirectRole() {
     const userRole = localStorage.getItem("userRole");
 
     if (userRole === "Admin") {
@@ -12,4 +12,4 @@ function redirectRole() {
     }
 }
 
-export default redirectRole;
+export default RedirectRole;

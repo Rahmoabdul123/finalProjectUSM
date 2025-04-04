@@ -10,8 +10,8 @@ function AdminDashboard() {
   return (
     <div>
       <AdminNavi />
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">Welcome to the Admin Dashboard</h1>
+      <div className="w-full text-center mt-6">
+        <h1 className="text-4xl font-bold">Welcome to the Admin Dashboard</h1>
       </div>
     </div>
   );

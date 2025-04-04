@@ -103,7 +103,7 @@ def request_join_team(request, team_id):
 def pending_join_requests(request):
     if request.user.role != "Admin":
         return Response({"detail": "Only admins can view requests."}, status=403)
-        
+
     university = request.user.university
 
     requests = TeamMembership.objects.filter(
@@ -150,3 +150,12 @@ def handle_join_request(request, membership_id):
     return Response({"detail": "Request rejected."})
 
     return Response({"detail": f"Request {action.lower()}ed successfully."})
+
+#this would list out the teams that the user is in
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_teams(request):
+    memberships = TeamMembership.objects.filter(user=request.user, status="Approve")
+    teams = [membership.team for membership in memberships]
+    serializer = TeamSerializer(teams, many=True)
+    return Response(serializer.data) 
