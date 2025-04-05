@@ -4,18 +4,26 @@ import { useNavigate } from "react-router-dom";
 import StudentHeader from "../components/studentHeader";
 
 function FindTeam() {
+  // State to store all teams at the user's university
   const [teams, setTeams] = useState([]);
+  // State to store list of all available sports for filtering
   const [sports, setSports] = useState([]);
+  // State to track the currently selected sport filter
   const [selectedSport, setSelectedSport] = useState("");
+  
+  // Boolean state to manage loading indicator
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  // Message feedback
   const [message, setMessage] = useState("");
 
+ // Load both sports and teams whenever selectedSport changes
   useEffect(() => {
     fetchTeams();
     fetchSports();
   }, [selectedSport]);
 
+  // Fetch teams at the user's university, filtered by sport if selected
   const fetchTeams = async () => {
     try {
       const response = await api.get("/api/teams-by-university/", {
@@ -28,7 +36,7 @@ function FindTeam() {
       setLoading(false);
     }
   };
-
+// Fetch all sports to populate the dropdown filter
   const fetchSports = async () => {
     try {
       const response = await api.get("/api/sports/");
@@ -38,6 +46,7 @@ function FindTeam() {
     }
   };
 
+// Send join request to the backend when user clicks "Request to Join"
   const handleJoinRequest = async (teamId) => {
     try {
       const response = await api.post(`/api/teams/${teamId}/join/`);
@@ -54,7 +63,7 @@ function FindTeam() {
       <StudentHeader />
 
       <h1 className="text-2xl font-bold mb-4">Teams at Your University</h1>
-
+      {/* Dropdown to filter teams by sport */}
       <select
         value={selectedSport}
         onChange={(e) => setSelectedSport(e.target.value)}
@@ -67,7 +76,7 @@ function FindTeam() {
           </option>
         ))}
       </select>
-
+      {/* Show loading spinner or team cards */}
       {loading ? (
         <p>Loading...</p>
       ) : (
@@ -87,7 +96,7 @@ function FindTeam() {
           ))}
         </div>
       )}
-
+      {/* Message area for success or failure */}
       {message && (
         <div className="mt-4 p-2 bg-yellow-100 text-yellow-800 rounded">
           {message}

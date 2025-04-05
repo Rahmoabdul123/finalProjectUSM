@@ -5,29 +5,33 @@ import { useNavigate } from "react-router-dom";
 
 function PendingRequest() {
   console.log(" PendingRequest loaded");
+  // handles the list of join requests
   const [requests, setRequests] = useState([]);
+  // handles loading spinner/feedback
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); 
 
+  // useEffect used to fetch pending join requests
   useEffect(() => {
     console.log(" useEffect triggered!");
     fetchRequests();
   }, []);
 
+  // Function to fetch pending join requests from the backend
   const fetchRequests = async () => {
-    console.log(" TRYING TO FETCH FROM API...");
+    console.log(" fetching api");
     try {
       const res = await api.get("/api/pending-join-requests/");
-      console.log(" RESPONSE RECEIVED:", res.data);
+      console.log(" response received", res.data);
       setRequests(res.data);
     } catch (error) {
-      console.error(" ERROR FETCHING REQUESTS", error);
+      console.error(" error fetch", error);
     } finally {
       setLoading(false);
     }
   };
   
-
+// Handles approval or rejection of a request
   const handleAction = async (id, action) => {
     try {
       await api.post(`/api/handle-request/${id}/`, { action });
@@ -48,6 +52,7 @@ function PendingRequest() {
         <p>Loading...</p>
       ) : requests.length === 0 ? (
         <p>No pending requests</p>
+        //  displays the list of requests
       ) : (
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {requests.map((req) => (

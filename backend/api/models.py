@@ -1,8 +1,10 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
-# I want users to register using email instead of username so using Custom user manager.
-class CustomUserManager(BaseUserManager):
+
+# ----------------------------------------------------------------------------------------------------------
+# I want users to register using email instead of username so using UniveristyUser.
+class UniversityUser(BaseUserManager):
     def create_user(self, email, password=None, university=None, first_name=None, last_name=None, **extra_fields):
         if not email:
             raise ValueError("Email is required")
@@ -15,7 +17,7 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         extra_fields.pop("username", None)
 
-        # Automatically assign "Admin" role to the first user of a university, otherwise "Student"
+        # Automatically assigns first user of the university and the rest become students
         user_count = User.objects.filter(university=university).count()
         extra_fields.setdefault("role", "Admin" if user_count == 0 else "Student")
 
@@ -37,6 +39,8 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_superuser", True)
         return self.create_user(email, password, **extra_fields)
 
+
+# ----------------------------------------------------------------------------------------------------------
 #my University table in the database that shows names and location
 class University(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -44,6 +48,8 @@ class University(models.Model):
 
     def __str__(self):
         return self.name
+    
+# ----------------------------------------------------------------------------------------------------------
 # Custom user model without username field
 class User(AbstractUser):
     username = None  # No username
@@ -57,16 +63,17 @@ class User(AbstractUser):
     #linking user to university 
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="users")
 
+    # Configure Django to use email for authentication
     USERNAME_FIELD = "email"  # Set email as the username field
     REQUIRED_FIELDS = ["first_name", "last_name"]  # Required when creating a superuser
 
-    objects = CustomUserManager() # Use custom user manager
+    objects = UniversityUser() 
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.role} - {self.university.name})"
 
 
-
+# ----------------------------------------------------------------------------------------------------------
 #testing
 class Note(models.Model):
     title = models.CharField(max_length=100)
@@ -76,23 +83,33 @@ class Note(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+
+# ----------------------------------------------------------------------------------------------------------
+#represents the types of sports
 class Sport(models.Model):
     name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
 
+
+# ----------------------------------------------------------------------------------------------------------
 #My Teams database table
 class Team(models.Model):
     name = models.CharField(max_length=100)
+    # Link team to university
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name="teams")
+    # Link team to a sport
     sport = models.ForeignKey(Sport, on_delete=models.CASCADE, related_name="teams")
+    # Optional: Track who created the team
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} - {self.sport.name} ({self.university.name})"
 
+
+# ----------------------------------------------------------------------------------------------------------
 #My TeamMembership
 
 class TeamMembership(models.Model): #Approval status
@@ -104,6 +121,7 @@ class TeamMembership(models.Model): #Approval status
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="team_memberships")
     team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="members")
+     # Status of the membership (pending/approved/rejected)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Pending")
     position = models.CharField(max_length=50, blank=True) # Optional position as I want players to input their position
     goals_scored = models.PositiveIntegerField(default=0)

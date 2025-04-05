@@ -4,13 +4,14 @@ import api from "../api";
 import StudentHeader from "../components/studentHeader";
 
 function MyTeams() {
+   // State to store the list of approved teams the student is in
   const [teams, setTeams] = useState([]);
   const navigate = useNavigate();
-
+  // Fetch the student's teams on component mount
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const res = await api.get("/api/my-teams/");
+        const res = await api.get("/api/my-teams/");// Fetch approved teams for current user
         setTeams(res.data);
       } catch (err) {
         console.error("Failed to fetch teams", err);
@@ -23,6 +24,7 @@ function MyTeams() {
     <div className="p-4">
       <StudentHeader />
       <h1 className="text-2xl font-bold mb-4">My Teams</h1>
+      {/* Show a message if user hasn't joined any team */}
       {teams.length === 0 ? (
         <p>You have not joined any teams yet.</p>
       ) : (
