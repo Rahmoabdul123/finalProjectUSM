@@ -186,3 +186,35 @@ class MyTeamsView(APIView):
         teams = [membership.team for membership in memberships]
         serializer = TeamSerializer(teams, many=True)
         return Response(serializer.data)
+    
+#-----------------------------------------------------------------------------------------------------------------------    
+#viewing Teammates in their team
+
+
+class TeamMembersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, team_id):
+        # Debug output
+        print("Fetching members for team:", team_id)
+
+        # Get all approved members 
+        memberships = TeamMembership.objects.filter(
+            team_id=team_id,
+            status__iexact="approve" # "approve" would always work regardless of casing
+        ).select_related('user')
+
+        print("Members found:", memberships.count())
+
+        data = [
+            {
+                "id": member.user.id,
+                "full_name": f"{member.user.first_name} {member.user.last_name}",
+                "position": member.position,
+                "goals_scored": member.goals_scored,
+            }
+            for member in memberships
+        ]
+
+        return Response(data)
+

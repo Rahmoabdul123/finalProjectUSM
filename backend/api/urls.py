@@ -12,4 +12,5 @@ urlpatterns = [
     path("handle-request/<int:membership_id>/", HandleJoinRequestView.as_view(), name="handle-join-request"),
     path("pending-join-requests/", PendingJoinRequestsView.as_view(), name="pending-join-requests"),  
     path("my-teams/", MyTeamsView.as_view(), name="my-teams"),
+    path("teams/<int:team_id>/members/", views.TeamMembersView.as_view(), name="team-members"),
 ]
