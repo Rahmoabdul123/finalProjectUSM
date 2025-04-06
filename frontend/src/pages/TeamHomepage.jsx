@@ -1,14 +1,21 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import TeamMembers from "../components/TeamMates";
-import StudentHeader from "../components/studentHeader";
+import StudentHeader from "../components/studentHeader"; // Might reintroduce later
 
 function TeamHomepage() {
   const { state } = useLocation();
   const team = state?.team;
-  const [activeTab, setActiveTab] = useState("members"); 
+  const [section, setSection] = useState("members"); // 'section' fits the domain better
 
-  if (!team) return <p>I can't find any team information.</p>;
+  if (!team) {
+    return (
+      <div className="p-8">
+        <p className="text-red-600 font-semibold">Oops! No team information was found.</p>
+        {/* TODO: Maybe redirect to dashboard or show a retry option, will look into later */}
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -19,9 +26,9 @@ function TeamHomepage() {
         <ul className="space-y-3">
           <li>
             <button
-              onClick={() => setActiveTab("members")}
+              onClick={() => setSection("members")}
               className={`w-full text-left px-4 py-2 rounded ${
-                activeTab === "members" ? "bg-blue-600 text-white" : "hover:bg-gray-200"
+                section === "members" ? "bg-blue-600 text-white" : "hover:bg-gray-200"
               }`}
             >
                Team Members
@@ -29,9 +36,9 @@ function TeamHomepage() {
           </li>
           <li>
             <button
-              onClick={() => setActiveTab("matches")}
+              onClick={() => setSection("matches")}
               className={`w-full text-left px-4 py-2 rounded ${
-                activeTab === "matches" ? "bg-blue-600 text-white" : "hover:bg-gray-200"
+                section === "matches" ? "bg-blue-600 text-white" : "hover:bg-gray-200"
               }`}
               disabled
             >
@@ -49,8 +56,7 @@ function TeamHomepage() {
           You are now a member of the {team.sport.name} team at {team.university.name}.
         </p>
 
-        {/* Rendering the content of the selected tab */}
-        {activeTab === "members" && <TeamMembers teamId={team.id} />}
+        {section === "members" && <TeamMembers teamId={team.id} />}
       </main>
     </div>
   );
