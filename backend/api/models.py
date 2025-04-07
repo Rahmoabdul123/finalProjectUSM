@@ -155,16 +155,13 @@ class LeagueTable(models.Model):
 # ----------------------------------------------------------------------------------------------------------
 # Match between two teams in a league
 class Match(models.Model):
-    home_team = models.ForeignKey('Team', on_delete=models.CASCADE, related_name='home_matches')
-    away_team = models.ForeignKey('Team', on_delete=models.CASCADE, related_name='away_matches')
+    home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches')
+    away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='away_matches')
     home_score = models.IntegerField(null=True, blank=True)
     away_score = models.IntegerField(null=True, blank=True)
-
-
+    league = models.ForeignKey(LeagueTable, on_delete=models.SET_NULL, null=True, blank=True)
+    sport = models.ForeignKey(Sport, on_delete=models.CASCADE)  
     date = models.DateField(null=True, blank=True)
-
-    home_score = models.IntegerField(null=True, blank=True)
-    away_score = models.IntegerField(null=True, blank=True)
 
     status = models.CharField(
         max_length=20,
@@ -181,6 +178,7 @@ class Match(models.Model):
     def __str__(self):
         match_date = self.date.strftime("%Y-%m-%d") if self.date else "TBD"
         return f"{self.home_team.name} vs {self.away_team.name} on {match_date} ({self.status})"
+
 
     
 # ----------------------------------------------------------------------------------------------------------

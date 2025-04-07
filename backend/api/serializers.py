@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Note, University, TeamMembership, Team, Sport
+from .models import Note, University, TeamMembership, Team, Sport, Match
 
 User = get_user_model()  # Get the custom user model
 
