@@ -105,6 +105,8 @@ class Team(models.Model):
     sport = models.ForeignKey(Sport, on_delete=models.CASCADE, related_name="teams")
     # Optional: Track who created the team
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    #adding league now that I have finally added the leagueTable
+    league = models.ForeignKey('LeagueTable', on_delete=models.SET_NULL, null=True, blank=True, related_name="teams")
 
     def __str__(self):
         return f"{self.name} - {self.sport.name} ({self.university.name})"
