@@ -13,6 +13,8 @@ import TeamHomepage from "./pages/TeamHomepage"
 import MyTeams from "./pages/MyTeams"
 import LeagueStandingsWrapper from "./pages/LeagueStandingsWrapper";
 import LeagueFind from "./pages/LeagueFind";
+import AdminUniTeam from "./pages/AdminUniTeam";
+import AdminTeamFixtures from "./pages/AdminTeamFixtures";
 function Logout() {
   localStorage.clear()
   return <Navigate to="/login" />
@@ -103,6 +105,8 @@ function App() {
         />
         <Route path="/search-league" element={<LeagueFind />} />
         <Route path="/leagues/:leagueId/standings" element={<LeagueStandingsWrapper />} />
+        <Route path="/admin-teams" element={<AdminUniTeam/>} />
+        <Route path="/admin-team-fixtures/:teamId" element={<AdminTeamFixtures/>} />
       </Routes>
     </BrowserRouter>
   )

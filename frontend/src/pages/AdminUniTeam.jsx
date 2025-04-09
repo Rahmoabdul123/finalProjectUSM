@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import AdminNavi from "../components/AdminNavi";
 import AdminUniversityTeams from "../components/AdminTeams";
 
-function AdminDashboard() {
+function AdminUniTeam() {
   useEffect(() => {
     console.log("AdminDashboard loaded");
   }, []);
@@ -11,12 +11,11 @@ function AdminDashboard() {
     <div className="flex flex-col min-h-screen">
       <AdminNavi />
       <div className="flex-1 p-6">
-        <h1 className="text-3xl font-bold mb-6 text-center">Welcome to the Admin Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-4">University Teams</h1>
         <AdminUniversityTeams />
       </div>
     </div>
   );
 }
 
-export default AdminDashboard;
-
+export default AdminUniTeam;

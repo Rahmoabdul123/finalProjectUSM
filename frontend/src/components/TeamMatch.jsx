@@ -99,7 +99,7 @@ function TeamMatch({ teamId }) {
                     : "hover:bg-green-100"
                 }`}
               >
-                ✅ Available
+                 Available
               </button>
 
               <button
@@ -110,7 +110,7 @@ function TeamMatch({ teamId }) {
                     : "hover:bg-red-100"
                 }`}
               >
-                ❌ Not Available
+                 Not Available
               </button>
             </div>
 

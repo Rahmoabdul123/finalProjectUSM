@@ -47,7 +47,7 @@ function ProtectedRoute({ children, requiredRole }) {
         }
     };
 
-    // ✅ Role-Based Redirection
+    // Role-Based Redirection
     const userRole = localStorage.getItem("role");
 
     if (isAuthorized === null) {

@@ -37,13 +37,13 @@ const AdminNavi = () => {
             </div>
           </div>
 
-          {/* Fixtures */}
+          {/* Teams */}
           <div className="relative group inline-block">
-            <div className="hover:text-gray-300 cursor-pointer">Fixtures</div>
+            <div className="hover:text-gray-300 cursor-pointer">Team Matches </div>
             <div className="absolute left-1/2 -translate-x-1/2 top-full w-48 bg-white text-black rounded shadow-lg
               opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50 
               pointer-events-auto py-1">
-              <Link to="/all-fixtures" className="block px-4 py-2 hover:bg-gray-100">All Fixtures</Link>
+              <Link to="/admin-teams" className="block px-4 py-2 hover:bg-gray-100">View My University Teams</Link>
             </div>
           </div>
 
