@@ -380,3 +380,52 @@ class ListLeaguesView(APIView):
         leagues = LeagueTable.objects.all()
         serializer = LeagueTableSerializer(leagues, many=True)
         return Response(serializer.data)
+
+
+class AdminUniversityTeamsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        if request.user.role != "Admin":
+            return Response({"detail": "Only admins can view this."}, status=403)
+
+        university = request.user.university
+        teams = Team.objects.filter(university=university)
+        serializer = TeamSerializer(teams, many=True)
+        return Response(serializer.data)
+
+
+
+class EditMatchScoreView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, match_id):
+        if request.user.role != "Admin":
+            return Response({"detail": "Only admins can edit match scores."}, status=403)
+
+        try:
+            match = Match.objects.get(id=match_id)
+        except Match.DoesNotExist:
+            return Response({"detail": "Match not found."}, status=404)
+
+        # Ensure the match is from the admin's university
+        admin_university = request.user.university
+        if match.home_team.university != admin_university and match.away_team.university != admin_university:
+            return Response({"detail": "You can only edit matches from your university."}, status=403)
+
+        # Only allow score edits for played matches
+        if match.status != "Played":
+            return Response({"detail": "Can only edit scores for matches that have been played."}, status=400)
+
+        home_score = request.data.get("home_score")
+        away_score = request.data.get("away_score")
+
+        if home_score is None or away_score is None:
+            return Response({"detail": "Both scores are required."}, status=400)
+
+        # Update the match scores
+        match.home_score = home_score
+        match.away_score = away_score
+        match.save()
+
+        return Response({"detail": "Match scores updated successfully."}, status=200)
