@@ -22,7 +22,7 @@ def run():
                     home_team = teams[i]
                     away_team = teams[j]
 
-                    # Avoid creating duplicate matches
+                    
                     if Match.objects.filter(home_team=home_team, away_team=away_team, league=league).exists():
                         continue
 

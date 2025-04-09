@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Note, University, TeamMembership, Team, Sport, Match
+from .models import Note, University, TeamMembership, Team, Sport, Match,MatchAvailability,LeagueTable
 
 User = get_user_model()  # Get the custom user model
 
@@ -60,14 +60,23 @@ class SportSerializer(serializers.ModelSerializer):
         model = Sport
         fields = ["id", "name"]
 
+
+class LeagueTableSerializer(serializers.ModelSerializer):
+    sport_name = serializers.CharField(source='sport.name', read_only=True)
+
+    class Meta:
+        model = LeagueTable
+        fields = ['id', 'name', 'sport', 'sport_name', 'gender']
+
 # Team Serializer
 class TeamSerializer(serializers.ModelSerializer):
     university = UniversitySerializer(read_only=True)
     sport = SportSerializer(read_only=True)
+    league = LeagueTableSerializer(read_only=True)
     
     class Meta:
         model = Team
-        fields = ["id", "name", "university", "sport", "created_by"]
+        fields = ["id", "name", "university", "sport", "created_by","league"]
 
 # Team Membership Serializer (for viewing teammates, score tracking)
 class TeamMembershipSerializer(serializers.ModelSerializer):
@@ -86,4 +95,29 @@ class TeamMembershipCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamMembership
         fields = ["team"]
+
+# Serializer to return only the basic info for a team (used inside the match serializer)
+class TeamBasicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = ['id', 'name'] # Only return team ID and name (e.g. "Yellow uni Girl's Football")
+
+class MatchSerializer(serializers.ModelSerializer): # Serializer to format match data, including team info as nested objects
+    # Nest the team info using the basic serializer above
+    home_team = TeamBasicSerializer()
+    away_team = TeamBasicSerializer()
+
+    class Meta:
+        model = Match
+        # Return the key fields needed to display a match (played or upcoming)
+        fields = ['id', 'date', 'home_team', 'away_team', 'home_score', 'away_score', 'status']
+
+
+class MatchAvailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MatchAvailability
+        fields = ['id', 'match', 'user', 'is_attending', 'responded_at']
+        read_only_fields = ['responded_at', 'user']
+
+
 

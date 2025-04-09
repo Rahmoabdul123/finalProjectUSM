@@ -4,13 +4,13 @@ from rest_framework import generics
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import University, Note,Team,TeamMembership
-from .serializers import UserSerializer, UniversitySerializer, NoteSerializer,TeamSerializer,TeamMembershipSerializer
+from .models import University, Note,Team,TeamMembership,Sport,Match,MatchAvailability,LeagueTable
+from .serializers import UserSerializer, UniversitySerializer, NoteSerializer,TeamSerializer,TeamMembershipSerializer,SportSerializer,MatchSerializer,MatchAvailabilitySerializer,LeagueTableSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
-from .models import Sport
-from .serializers import SportSerializer
 from rest_framework.views import APIView
+from django.db.models import Q
+
 
 User = get_user_model()
 # -----------------------------------------------------------------------------------------------------
@@ -217,4 +217,166 @@ class TeamMembersView(APIView):
         ]
 
         return Response(data)
+    
 
+#Viewing past and future matches in their own team (hoping to add that as a tab)
+
+class MyMatchesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Get all approved teams the user is part of
+        memberships = TeamMembership.objects.filter(user=request.user, status="Approved")
+        team_ids = memberships.values_list('team_id', flat=True)
+
+        # Match history (status = Played)
+        past_matches = Match.objects.filter(
+            status="Played"
+        ).filter(
+            home_team_id__in=team_ids
+        ) | Match.objects.filter(
+            status="Played",
+            away_team_id__in=team_ids
+        )
+
+        # Upcoming matches (status = Pending)
+        upcoming_matches = Match.objects.filter(
+            status="Pending"
+        ).filter(
+            home_team_id__in=team_ids
+        ) | Match.objects.filter(
+            status="Pending",
+            away_team_id__in=team_ids
+        )
+
+        # Serialize and return
+        history = MatchSerializer(past_matches, many=True).data
+        upcoming = MatchSerializer(upcoming_matches, many=True).data
+
+        return Response({
+            "history": history,
+            "upcoming": upcoming
+        })
+
+class TeamMatchesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, team_id):
+        matches = Match.objects.filter(
+            Q(home_team_id=team_id) | Q(away_team_id=team_id)
+        ).order_by('date')
+
+        serializer = MatchSerializer(matches, many=True)
+        return Response(serializer.data)
+
+
+#-----------------------------------------------------------------------------------------------------------------------    
+#viewing Teammates in their team
+
+class MatchAvailabilityView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, match_id):
+        try:
+            availability = MatchAvailability.objects.get(match_id=match_id, user=request.user)
+            serializer = MatchAvailabilitySerializer(availability)
+            return Response(serializer.data)
+        except MatchAvailability.DoesNotExist:
+            return Response({"detail": "No availability set."}, status=404)
+
+
+    def post(self, request, match_id):
+        user = request.user
+        is_attending = request.data.get("is_attending")
+
+        if is_attending is None:
+            return Response({"detail": "Missing 'is_attending' value."}, status=400)
+
+        availability, created = MatchAvailability.objects.update_or_create(
+            match_id=match_id,
+            user=user,
+            defaults={"is_attending": is_attending}
+        )
+
+        serializer = MatchAvailabilitySerializer(availability)
+        return Response(serializer.data, status=200 if not created else 201)
+
+
+
+# API view to generate and return the league standings
+class LeagueStandingsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, league_id):
+        # Fetch all teams associated with the given league
+        teams = Team.objects.filter(league_id=league_id)
+
+        # Get only the matches that have been played and belong to the same league
+        matches = Match.objects.filter(league_id=league_id, status="Played")
+
+        standings = []
+
+        for team in teams:
+            # Initialize stats for the team
+            stats = {
+                "played": 0,
+                "won": 0,
+                "draw": 0,
+                "lost": 0,
+                "goals_scored": 0,
+                "goals_conceded": 0,
+                "points": 0,
+            }
+
+            for match in matches:
+                # Check if the team participated in this match
+                is_home = match.home_team == team
+                is_away = match.away_team == team
+
+                if not (is_home or is_away):
+                    continue  # Skip matches where this team didn't participate
+
+                stats["played"] += 1
+
+                # Determine which side the team played and assign scores accordingly
+                team_score = match.home_score if is_home else match.away_score
+                opponent_score = match.away_score if is_home else match.home_score
+
+                stats["goals_scored"] += team_score or 0
+                stats["goals_conceded"] += opponent_score or 0
+
+                # Update win/draw/loss stats
+                if team_score > opponent_score:
+                    stats["won"] += 1
+                    stats["points"] += 3
+                elif team_score < opponent_score:
+                    stats["lost"] += 1
+                else:
+                    stats["draw"] += 1
+                    stats["points"] += 1
+
+            # Add team's final stats and goal difference to standings list
+            standings.append({
+                "team_id": team.id,
+                "team_name": team.name,
+                "goal_difference": stats["goals_scored"] - stats["goals_conceded"],
+                **stats,
+            })
+
+        # Define how the standings should be sorted: 
+        # first by points, then goal difference, then goals scored
+        def sort_by_standings(item):
+             return (item["points"], item["goal_difference"], item["goals_scored"])
+
+        standings.sort(key=sort_by_standings, reverse=True)
+
+        return Response(standings)
+
+
+class ListLeaguesView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        leagues = LeagueTable.objects.all()
+        serializer = LeagueTableSerializer(leagues, many=True)
+        return Response(serializer.data)

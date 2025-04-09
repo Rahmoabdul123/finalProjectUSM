@@ -96,6 +96,22 @@ class Sport(models.Model):
 
 
 # ----------------------------------------------------------------------------------------------------------
+#League Table for each sport and gender
+class LeagueTable(models.Model):
+    name = models.CharField(max_length=255, unique=True) 
+    sport = models.ForeignKey('Sport', on_delete=models.CASCADE, related_name='leagues')
+    gender = models.CharField(max_length=10)  # 'Girls' or 'Boys'
+
+  # will be using this to help with the ranking later on
+    points = models.IntegerField(default=0)
+    wins = models.IntegerField(default=0)
+    losses = models.IntegerField(default=0)
+    draws = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.name}"
+
+# ----------------------------------------------------------------------------------------------------------
 #My Teams database table
 class Team(models.Model):
     name = models.CharField(max_length=100)
@@ -136,21 +152,7 @@ class Meta:
     unique_together = ('user', 'team') # ensure they don't request the same team more than once.
 
 
-# ----------------------------------------------------------------------------------------------------------
-#League Table for each sport and gender
-class LeagueTable(models.Model):
-    name = models.CharField(max_length=255, unique=True) 
-    sport = models.ForeignKey('Sport', on_delete=models.CASCADE, related_name='leagues')
-    gender = models.CharField(max_length=10)  # 'Girls' or 'Boys'
 
-  # will be using this to help with the ranking later on
-    points = models.IntegerField(default=0)
-    wins = models.IntegerField(default=0)
-    losses = models.IntegerField(default=0)
-    draws = models.IntegerField(default=0)
-
-    def __str__(self):
-        return f"{self.name}"
     
 # ----------------------------------------------------------------------------------------------------------
 # Match between two teams in a league

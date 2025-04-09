@@ -4,14 +4,15 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
-import AdminDashboard from "./pages/AdminDashboard";  //  Admin Page
-import StudentDashboard from "./pages/StudentDashboard";  //  Student Page
+import AdminDashboard from "./pages/AdminDashboard"; 
+import StudentDashboard from "./pages/StudentDashboard";
 import ProtectedRoute from "./components/ProtectedRoute"
-import JoinTeam from "./pages/findTeam"; //joining a team page
+import JoinTeam from "./pages/findTeam";
 import PendingRequest from "./pages/PendingRequest"
 import TeamHomepage from "./pages/TeamHomepage"
 import MyTeams from "./pages/MyTeams"
-
+import LeagueStandingsWrapper from "./pages/LeagueStandingsWrapper";
+import LeagueFind from "./pages/LeagueFind";
 function Logout() {
   localStorage.clear()
   return <Navigate to="/login" />
@@ -100,11 +101,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
-
-
-        
-        
+        <Route path="/search-league" element={<LeagueFind />} />
+        <Route path="/leagues/:leagueId/standings" element={<LeagueStandingsWrapper />} />
       </Routes>
     </BrowserRouter>
   )
