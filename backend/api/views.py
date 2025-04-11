@@ -408,24 +408,25 @@ class EditMatchScoreView(APIView):
         except Match.DoesNotExist:
             return Response({"detail": "Match not found."}, status=404)
 
-        # Ensure the match is from the admin's university
-        admin_university = request.user.university
-        if match.home_team.university != admin_university and match.away_team.university != admin_university:
+        if match.home_team.university != request.user.university and match.away_team.university != request.user.university:
             return Response({"detail": "You can only edit matches from your university."}, status=403)
 
-        # Only allow score edits for played matches
         if match.status != "Played":
             return Response({"detail": "Can only edit scores for matches that have been played."}, status=400)
 
         home_score = request.data.get("home_score")
         away_score = request.data.get("away_score")
+        match_date = request.data.get("date")  
 
         if home_score is None or away_score is None:
             return Response({"detail": "Both scores are required."}, status=400)
 
-        # Update the match scores
         match.home_score = home_score
         match.away_score = away_score
+
+        if match_date:  #  update match date if provided
+            match.date = match_date
+
         match.save()
 
         return Response({"detail": "Match scores updated successfully."}, status=200)
