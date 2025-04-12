@@ -200,3 +200,18 @@ class MatchAvailability(models.Model):
         status = 'Available' if self.is_attending else 'Not Available'
         return f"{self.user.first_name} - {self.match} - {status}"
 
+
+class PlayerGoal(models.Model):
+    # Tracks a player's goal count in a match
+    user  = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="goals")
+    match = models.ForeignKey('Match', on_delete=models.CASCADE, related_name="goals")
+    team  = models.ForeignKey('Team', on_delete=models.CASCADE, related_name="scored_goals")
+    goals = models.PositiveIntegerField(default=1)  # default to 1 goal
+    scored_at = models.DateTimeField(auto_now_add=True)  # when the goal was logged
+
+    class Meta:
+        # each player should only have one goal record per match
+        unique_together = ("match", "user")
+
+    def __str__(self):
+        return f"{self.user.first_name} scored {self.goals} in {self.match}"
