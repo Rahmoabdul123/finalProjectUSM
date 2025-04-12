@@ -43,7 +43,7 @@ function AdminTeams() {
         {teams.map((team) => (
           <div
             key={team.id}
-            onClick={() => navigate(`/admin-team-fixtures/${team.id}`)}
+            onClick={() => navigate(`/admin-teams/${team.id}/details`)}
             className="cursor-pointer border p-4 bg-white shadow-md hover:bg-blue-50 rounded transition"
           >
             <h3 className="text-xl font-semibold mb-1">{team.name}</h3>

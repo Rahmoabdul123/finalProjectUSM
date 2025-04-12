@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import AdminNavi from "../components/AdminNavi";
-import AdminUniversityTeams from "../components/AdminTeams";
-
+import AdminTeams from "../components/AdminTeams";
+// This is when you click on view my university teams on NAV
 function AdminUniTeam() {
   useEffect(() => {
     console.log("AdminDashboard loaded");
@@ -12,7 +12,7 @@ function AdminUniTeam() {
       <AdminNavi />
       <div className="flex-1 p-6">
       <h1 className="text-2xl font-bold mb-4">University Teams</h1>
-        <AdminUniversityTeams />
+        <AdminTeams />
       </div>
     </div>
   );

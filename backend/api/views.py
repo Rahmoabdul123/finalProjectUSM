@@ -277,13 +277,33 @@ class MatchAvailabilityView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, match_id):
-        try:
-            availability = MatchAvailability.objects.get(match_id=match_id, user=request.user)
-            serializer = MatchAvailabilitySerializer(availability)
-            return Response(serializer.data)
-        except MatchAvailability.DoesNotExist:
-            return Response({"detail": "No availability set."}, status=404)
+        user = request.user
 
+        if user.role == "Admin":
+            # Admin can view availability of all players in matches from their university
+            availabilities = MatchAvailability.objects.filter(
+                match_id=match_id,
+                user__university=user.university
+            ).select_related("user")
+
+            data = [
+                {
+                    "player": f"{availability.user.first_name} {availability.user.last_name}",
+                    "is_attending": availability.is_attending,
+                    "responded_at": availability.responded_at
+                }
+                for availability in availabilities
+            ]
+            return Response(data)
+
+        else:
+            # Students see their own availability
+            try:
+                availability = MatchAvailability.objects.get(match_id=match_id, user=user)
+                serializer = MatchAvailabilitySerializer(availability)
+                return Response(serializer.data)
+            except MatchAvailability.DoesNotExist:
+                return Response({"detail": "No availability set."}, status=404)
 
     def post(self, request, match_id):
         user = request.user
@@ -430,3 +450,74 @@ class EditMatchScoreView(APIView):
         match.save()
 
         return Response({"detail": "Match scores updated successfully."}, status=200)
+    
+
+# Admin view to list all players in a specific team
+class AdminTeamMembersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, team_id):
+        if request.user.role != "Admin":
+            return Response({"detail": "Only admins can view team members."}, status=403)
+
+        try:
+            team = Team.objects.get(id=team_id)
+        except Team.DoesNotExist:
+            return Response({"detail": "Team not found."}, status=404)
+
+        if team.university != request.user.university:
+            return Response({"detail": "You can only view teams from your university."}, status=403)
+
+        members = TeamMembership.objects.filter(team=team, status="Approve").select_related("user")
+        data = [
+            {
+                "id": member.user.id,
+                "name": f"{member.user.first_name} {member.user.last_name}",
+                "position": member.position,
+                "goals_scored": member.goals_scored
+            }
+            for member in members
+        ]
+
+        return Response(data)
+
+
+
+class AdminMatchAvailabilityView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, match_id):
+        if request.user.role != "Admin":
+            return Response({"detail": "Only admins can view this."}, status=403)
+
+        try:
+            match = Match.objects.get(id=match_id)
+        except Match.DoesNotExist:
+            return Response({"detail": "Match not found."}, status=404)
+
+        if match.home_team.university != request.user.university and match.away_team.university != request.user.university:
+            return Response({"detail": "Match not in your university."}, status=403)
+
+        availability = MatchAvailability.objects.filter(match=match).select_related("user")
+
+        home_team_data = []
+        away_team_data = []
+
+        for a in availability:
+            player_data = {
+                "user": f"{a.user.first_name} {a.user.last_name}",
+                "is_attending": a.is_attending,
+                "responded_at": a.responded_at,
+            }
+
+            if TeamMembership.objects.filter(user=a.user, team=match.home_team, status="Approve").exists():
+                home_team_data.append(player_data)
+            elif TeamMembership.objects.filter(user=a.user, team=match.away_team, status="Approve").exists():
+                away_team_data.append(player_data)
+
+        return Response({
+            "home_team": match.home_team.name,
+            "away_team": match.away_team.name,
+            "home_team_players": home_team_data,
+            "away_team_players": away_team_data,
+        })

@@ -15,6 +15,11 @@ import LeagueStandingsWrapper from "./pages/LeagueStandingsWrapper";
 import LeagueFind from "./pages/LeagueFind";
 import AdminUniTeam from "./pages/AdminUniTeam";
 import AdminTeamFixtures from "./pages/AdminTeamFixtures";
+import AdminTeamMembers from "./pages/AdminTeamMembers";
+import AdminMatchAvailability from "./pages/AdminMatchAvailability";
+import AdminTeamDetails from "./pages/AdminTeamDetails";
+
+
 function Logout() {
   localStorage.clear()
   return <Navigate to="/login" />
@@ -105,8 +110,52 @@ function App() {
         />
         <Route path="/search-league" element={<LeagueFind />} />
         <Route path="/leagues/:leagueId/standings" element={<LeagueStandingsWrapper />} />
-        <Route path="/admin-teams" element={<AdminUniTeam/>} />
-        <Route path="/admin-team-fixtures/:teamId" element={<AdminTeamFixtures/>} />
+        <Route
+          path="/admin-teams"
+          element={
+            <ProtectedRoute requiredRole="Admin">
+              <AdminUniTeam />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-team-fixtures/:teamId"
+          element={
+            <ProtectedRoute requiredRole="Admin">
+              <AdminTeamFixtures />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/teams/:teamId/members"
+          element={
+            <ProtectedRoute requiredRole="Admin">
+              <AdminTeamMembers />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/matches/:matchId/availability"
+          element={
+            <ProtectedRoute requiredRole="Admin">
+              <AdminMatchAvailability />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin-teams/:teamId/details"
+          element={
+            <ProtectedRoute requiredRole="Admin">
+              <AdminTeamDetails />
+            </ProtectedRoute>
+          }
+        />
+
+
+
       </Routes>
     </BrowserRouter>
   )

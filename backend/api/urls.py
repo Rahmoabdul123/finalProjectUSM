@@ -21,5 +21,8 @@ urlpatterns = [
     path("admin/university-teams/", views.AdminUniversityTeamsView.as_view(), name="admin-university-teams"),
     path("matches/<int:match_id>/edit-score/", views.EditMatchScoreView.as_view(), name="edit-match-score"),
     path("api/team-matches/<int:team_id>/", views.TeamMatchesView.as_view(), name="team-matches"),
+    path("admin/teams/<int:team_id>/members/", views.AdminTeamMembersView.as_view(), name="admin-team-members"),
+    path("admin/matches/<int:match_id>/availability/", views.AdminMatchAvailabilityView.as_view(), name="admin-match-availability"),
+
 
 ]

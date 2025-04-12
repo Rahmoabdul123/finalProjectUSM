@@ -27,82 +27,81 @@ function TeamHomepage() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar , I need to work out how to add regular top nav bar to work */}
-      {/* <StudentHeader />*/}
+    <div className="min-h-screen flex flex-col">
+      {/* Top Nav */}
+      <StudentHeader />
 
-      <aside className="w-64 bg-gray-100 p-6 shadow-lg">
-        <h2 className="text-xl font-bold mb-4">Team Menu</h2>
-        <ul className="space-y-3">
-          <li>
-            <button
-              onClick={() => setSection("members")}
-              className={`w-full text-left px-4 py-2 rounded ${
-                section === "members"
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-200"
-              }`}
-            >
-              Team Members
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setSection("matches")}
-              className={`w-full text-left px-4 py-2 rounded ${
-                section === "matches"
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-200"
-              }`}
-            >
-              Matches
-            </button>
-          </li>
-          <li>
-            <button
-              onClick={() => setSection("league")}
-              className={`w-full text-left px-4 py-2 rounded ${
-                section === "league"
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-gray-200"
-              }`}
-            >
-              League
-            </button>
-          </li>
-        </ul>
-      </aside>
+      {/* Main content: Sidebar + Content */}
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <aside className="w-64 bg-gray-100 p-6 shadow-lg">
+          <h2 className="text-xl font-bold mb-4">Team Menu</h2>
+          <ul className="space-y-3">
+            <li>
+              <button
+                onClick={() => setSection("members")}
+                className={`w-full text-left px-4 py-2 rounded ${
+                  section === "members"
+                    ? "bg-blue-600 text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                Team Members
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setSection("matches")}
+                className={`w-full text-left px-4 py-2 rounded ${
+                  section === "matches"
+                    ? "bg-blue-600 text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                Matches
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => setSection("league")}
+                className={`w-full text-left px-4 py-2 rounded ${
+                  section === "league"
+                    ? "bg-blue-600 text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                League
+              </button>
+            </li>
+          </ul>
+        </aside>
 
-      {/* Main content area */}
-      <main className="flex-1 p-8 bg-gray-50">
-        <h1 className="text-3xl font-bold mb-6">
-          Welcome to {team.name}!
-        </h1>
+        {/* Main Content */}
+        <main className="flex-1 p-8 bg-gray-50">
+          <h1 className="text-3xl font-bold mb-6">Welcome to {team.name}!</h1>
 
-        <img
-          src="/images/USMLogo.png"
-          alt="University Logo"
-          className="h-20 mb-6"
-        />
-
-        <p className="text-lg mb-6">
-          You are now a member of the {team.sport.name} team at{" "}
-          {team.university.name}.
-        </p>
-
-        {/* Conditional rendering based on selected section */}
-        {section === "members" && <TeamMates teamId={team.id} />}
-
-        {section === "matches" && <TeamMatch teamId={team.id} />}
-
-        {section === "league" && (
-          <MyLeagueStandings
-            teamId={team.id}
-            leagueId={team.league.id}
-            teamName={team.name}
+          <img
+            src="/images/USMLogo.png"
+            alt="University Logo"
+            className="h-20 mb-6"
           />
-        )}
-      </main>
+
+          <p className="text-lg mb-6">
+            You are now a member of the {team.sport.name} team at{" "}
+            {team.university.name}.
+          </p>
+
+          {section === "members" && <TeamMates teamId={team.id} />}
+          {section === "matches" && <TeamMatch teamId={team.id} />}
+          {section === "league" && (
+            <MyLeagueStandings
+              teamId={team.id}
+              leagueId={team.league.id}
+              teamName={team.name}
+            />
+          )}
+        </main>
+      </div>
     </div>
   );
 }
