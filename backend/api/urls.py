@@ -1,10 +1,7 @@
 from django.urls import path
 from . import views
-# from .views import (TeamsByUniversityView, RequestJoinTeamView, HandleJoinRequestView, MyTeamsView, PendingJoinRequestsView, ListSportsView,)
 
 urlpatterns = [
-    path("notes/", views.NoteListCreate.as_view(), name="note-list"),
-    path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),
     path("teams-by-university/", views.TeamsByUniversityView.as_view()),
     path("sports/", views.ListSportsView.as_view(), name="list-sports"),
     path("join-requests/", views.PendingJoinRequestsView.as_view()),

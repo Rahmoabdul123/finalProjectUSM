@@ -41,11 +41,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data["university"] = user.university.id if user.university else None
         return data
 
-class NoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Note
-        fields = ["id", "title", "content", "created_at", "author"]
-        extra_kwargs = {"author": {"read_only": True}}
 
 # Serializer for Sport model
 class SportSerializer(serializers.ModelSerializer):
