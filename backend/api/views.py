@@ -4,12 +4,13 @@ from rest_framework import generics
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import University, Note,Team,TeamMembership,Sport,Match,MatchAvailability,LeagueTable
-from .serializers import UserSerializer, UniversitySerializer,TeamSerializer,TeamMembershipSerializer,SportSerializer,MatchSerializer,MatchAvailabilitySerializer,LeagueTableSerializer
+from .models import University, Note,Team,TeamMembership,Sport,Match,MatchAvailability,LeagueTable,PlayerGoal
+from .serializers import UserSerializer, UniversitySerializer,TeamSerializer,TeamMembershipSerializer,SportSerializer,MatchSerializer,MatchAvailabilitySerializer,LeagueTableSerializer,PlayerGoalSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
 from rest_framework.views import APIView
 from django.db.models import Q
+from django.db.models import Sum
 
 
 User = get_user_model()
@@ -171,10 +172,8 @@ class TeamMembersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, team_id):
-        # Debug output
         print("Fetching members for team:", team_id)
 
-        # Get all approved members 
         memberships = TeamMembership.objects.filter(
             team_id=team_id,
             status__iexact="approve" # "approve" would always work regardless of casing
@@ -187,14 +186,13 @@ class TeamMembersView(APIView):
                 "id": member.user.id,
                 "full_name": f"{member.user.first_name} {member.user.last_name}",
                 "position": member.position,
-                "goals_scored": member.goals_scored,
+                "goals_scored": PlayerGoal.objects.filter(user=member.user, team_id=team_id).aggregate(Sum("goals"))["goals__sum"] or 0,
             }
             for member in memberships
         ]
 
         return Response(data)
     
-
 #Viewing past and future matches in their own team (hoping to add that as a tab)
 
 class MyMatchesView(APIView):
@@ -202,7 +200,7 @@ class MyMatchesView(APIView):
 
     def get(self, request):
         # Get all approved teams the user is part of
-        memberships = TeamMembership.objects.filter(user=request.user, status="Approved")
+        memberships = TeamMembership.objects.filter(user=request.user, status="Approve")
         team_ids = memberships.values_list('team_id', flat=True)
 
         # Match history (status = Played)
@@ -407,12 +405,16 @@ class EditMatchScoreView(APIView):
         if match.home_team.university != request.user.university and match.away_team.university != request.user.university:
             return Response({"detail": "You can only edit matches from your university."}, status=403)
 
+        match_status = request.data.get("status")
+        if match_status in ["Pending", "Played"]:
+            match.status = match_status
+
         if match.status != "Played":
             return Response({"detail": "Can only edit scores for matches that have been played."}, status=400)
 
         home_score = request.data.get("home_score")
         away_score = request.data.get("away_score")
-        match_date = request.data.get("date")  
+        match_date = request.data.get("date")
 
         if home_score is None or away_score is None:
             return Response({"detail": "Both scores are required."}, status=400)
@@ -420,7 +422,7 @@ class EditMatchScoreView(APIView):
         match.home_score = home_score
         match.away_score = away_score
 
-        if match_date:  #  update match date if provided
+        if match_date:
             match.date = match_date
 
         match.save()
@@ -445,15 +447,20 @@ class AdminTeamMembersView(APIView):
             return Response({"detail": "You can only view teams from your university."}, status=403)
 
         members = TeamMembership.objects.filter(team=team, status="Approve").select_related("user")
-        data = [
-            {
+
+        data = []
+        for member in members:
+            total_goals = (
+                PlayerGoal.objects.filter(user=member.user, team=team)
+                .aggregate(Sum("goals"))["goals__sum"] or 0
+            )
+
+            data.append({
                 "id": member.user.id,
                 "name": f"{member.user.first_name} {member.user.last_name}",
                 "position": member.position,
-                "goals_scored": member.goals_scored
-            }
-            for member in members
-        ]
+                "goals_scored": total_goals
+            })
 
         return Response(data)
 
@@ -497,3 +504,111 @@ class AdminMatchAvailabilityView(APIView):
             "home_team_players": home_team_data,
             "away_team_players": away_team_data,
         })
+
+
+
+class AssignPlayerGoalsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, match_id):
+        if request.user.role != "Admin":
+            return Response({"detail": "Only admins can assign goals."}, status=403)
+
+        try:
+            match = Match.objects.get(id=match_id)
+        except Match.DoesNotExist:
+            return Response({"detail": "Match not found."}, status=404)
+
+        data = request.data  # Expecting list: [{ user_id, team_id, goals }]
+
+        updated_goals = []
+        for entry in data:
+            player_id = entry.get("user_id")
+            team_id = entry.get("team_id")
+            goals = entry.get("goals")
+
+            if not (player_id and team_id and goals is not None):
+                continue
+
+            try:
+                player = User.objects.get(id=player_id)
+                team = Team.objects.get(id=team_id)
+            except (User.DoesNotExist, Team.DoesNotExist):
+                continue
+
+            goal_entry, created = PlayerGoal.objects.update_or_create(
+                match=match,
+                user=player,
+                defaults={"team": team, "goals": goals}
+            )
+            updated_goals.append(goal_entry)
+
+        serializer = PlayerGoalSerializer(updated_goals, many=True)
+        return Response(serializer.data)
+
+
+class UpdatePlayerPositionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, team_id):
+        new_position = request.data.get("position")
+        if not new_position:
+            return Response({"detail": "Position is required."}, status=400)
+
+        try:
+            membership = TeamMembership.objects.get(user=request.user, team_id=team_id, status="Approve")
+        except TeamMembership.DoesNotExist:
+            return Response({"detail": "You are not a member of this team."}, status=404)
+
+        membership.position = new_position
+        membership.save()
+
+        return Response({"detail": "Position updated successfully."})
+
+
+class TopTeamScorersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, team_id):
+        top_players = (
+            PlayerGoal.objects.filter(team_id=team_id)
+            .values("user__first_name", "user__last_name", "user__id")
+            .annotate(total_goals=Sum("goals"))
+            .order_by("-total_goals")[:5]
+        )
+
+        data = [
+            {
+                "user_id": p["user__id"],
+                "name": f"{p['user__first_name']} {p['user__last_name']}",
+                "total_goals": p["total_goals"]
+            }
+            for p in top_players
+        ]
+
+        return Response(data) 
+
+    
+
+class TopLeagueScorersView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, league_id):
+        top_players = (
+            PlayerGoal.objects.filter(match__league_id=league_id)
+            .values("user__first_name", "user__last_name", "user__id")
+            .annotate(total_goals=Sum("goals"))
+            .order_by("-total_goals")[:5]
+        )
+
+        data = [
+            {
+                "user_id": p["user__id"],
+                "name": f"{p['user__first_name']} {p['user__last_name']}",
+                "total_goals": p["total_goals"]
+            }
+            for p in top_players
+        ]
+
+        return Response(data)
+

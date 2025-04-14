@@ -25,7 +25,7 @@ function PendingRequest() {
       console.log(" response received", res.data);
       setRequests(res.data);
     } catch (error) {
-      console.error(" error fetch", error);
+      console.log(" error fetch", error);
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ function PendingRequest() {
       // Refresh the list after approval or rejection
       fetchRequests();
     } catch (error) {
-      console.error("Action failed", error);
+      console.log("Action failed", error);
     }
   };
   

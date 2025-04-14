@@ -14,7 +14,7 @@ function AdminTeamMembers() {
         const res = await api.get(`/api/admin/teams/${teamId}/members/`);
         setMembers(res.data);
       } catch (err) {
-        console.error("Failed to fetch team members", err);
+        console.log("Failed to fetch team members", err);
         // TODO: Optional: Show user-friendly error message
       }
     };

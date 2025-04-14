@@ -20,6 +20,9 @@ urlpatterns = [
     path("api/team-matches/<int:team_id>/", views.TeamMatchesView.as_view(), name="team-matches"),
     path("admin/teams/<int:team_id>/members/", views.AdminTeamMembersView.as_view(), name="admin-team-members"),
     path("admin/matches/<int:match_id>/availability/", views.AdminMatchAvailabilityView.as_view(), name="admin-match-availability"),
-
+    path("admin/matches/<int:match_id>/assign-goals/", views.AssignPlayerGoalsView.as_view()),
+    path("teams/<int:team_id>/update-position/", views.UpdatePlayerPositionView.as_view()),
+    path("teams/<int:team_id>/top-scorers/", views.TopTeamScorersView.as_view(), name="top-scorers"),
+    path("leagues/<int:league_id>/top-scorers/", views.TopLeagueScorersView.as_view(), name="league-top-scorers"),
 
 ]

@@ -17,7 +17,7 @@ function AdminTeams() {
         const res = await api.get("/api/admin/university-teams/");
         setTeams(res.data);
       } catch (err) {
-        console.error("Failed to fetch university teams", err);
+        console.log("Failed to fetch university teams", err);
         // TODO: Add user-visible error message or retry option
       }
     };

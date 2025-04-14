@@ -17,7 +17,7 @@ function LeagueStandings({ leagueId }) {
         const res = await api.get(`/api/leagues/${leagueId}/standings/`);
         setStandings(res.data);
       } catch (err) {
-        console.error("Failed to fetch standings:", err);
+        console.log("Failed to fetch standings:", err);
         // TODO: Add error message UI for better user feedback
       } finally {
         setLoading(false);

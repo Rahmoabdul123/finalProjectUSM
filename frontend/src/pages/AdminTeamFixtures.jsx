@@ -2,25 +2,21 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import EditScore from "../components/EditScore";
+import AdminAssignGoals from "../components/AdminAssignGoals";
 
-/**
- * Allows admins to view match details and edit scores for completed matches.
- */
 function AdminTeamFixtures() {
   const { teamId } = useParams();
   const navigate = useNavigate();
   const [matches, setMatches] = useState([]);
   const [selectedMatch, setSelectedMatch] = useState(null);
+  const [showAssignGoals, setShowAssignGoals] = useState(false);
 
-  /**
-   * Fetch all matches for the team.
-   */
   const fetchTeamMatches = async () => {
     try {
       const res = await api.get(`/api/teams/${teamId}/matches/`);
       setMatches(res.data);
     } catch (err) {
-      console.error("Failed to fetch matches", err);
+      console.log("Failed to fetch matches", err);
     }
   };
 
@@ -30,7 +26,6 @@ function AdminTeamFixtures() {
 
   return (
     <div className="flex flex-col min-h-screen">
-
       <div className="flex-1 p-6">
         <h1 className="text-2xl font-bold mb-4">Team Fixtures</h1>
 
@@ -70,6 +65,18 @@ function AdminTeamFixtures() {
                     >
                       View Availability
                     </button>
+
+                    {match.status === "Played" && (
+                      <button
+                        onClick={() => {
+                          setSelectedMatch(match);
+                          setShowAssignGoals(true);
+                        }}
+                        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                      >
+                        Assign Goals
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
@@ -89,8 +96,24 @@ function AdminTeamFixtures() {
           </div>
         </div>
       )}
+
+      {showAssignGoals && selectedMatch && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+            <AdminAssignGoals
+              matchId={selectedMatch.id}
+              teamId={teamId}
+              onClose={() => {
+                setShowAssignGoals(false);
+                setSelectedMatch(null);
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export default AdminTeamFixtures;
+

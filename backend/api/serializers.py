@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Note, University, TeamMembership, Team, Sport, Match,MatchAvailability,LeagueTable
+from .models import Note, University, TeamMembership, Team, Sport, Match,MatchAvailability,LeagueTable,PlayerGoal
 
 User = get_user_model()  # Get the custom user model
 
@@ -115,4 +115,12 @@ class MatchAvailabilitySerializer(serializers.ModelSerializer):
         read_only_fields = ['responded_at', 'user']
 
 
+class PlayerGoalSerializer(serializers.ModelSerializer):
+    player_name = serializers.SerializerMethodField()
 
+    class Meta:
+        model = PlayerGoal
+        fields = ['user', 'player_name', 'match', 'team', 'goals', 'scored_at']
+
+    def get_player_name(self, obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"

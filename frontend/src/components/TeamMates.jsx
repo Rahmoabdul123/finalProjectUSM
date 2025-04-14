@@ -18,7 +18,7 @@ function TeamMates({ teamId }) {
         const res = await api.get(`/api/teams/${teamId}/members/`);  // Call backend endpoint
         setMembers(res.data);  // Save the list of members
       } catch (error) {
-        console.error("Failed to fetch team members", error);  // Log any errors
+        console.log("Failed to fetch team members", error);  // Log any errors
         // TODO: Optionally show an error message to the user here
       } finally {
         setLoading(false);  // Hide loading indicator regardless of success or error

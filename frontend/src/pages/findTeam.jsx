@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import StudentHeader from "../components/studentHeader";
 import LoadingIndicator from "../components/LoadingIndicator";
+import { getSportLogo } from "../components/SportsLogoIcon";
 
 function FindTeam() {
   const [teams, setTeams] = useState([]);
@@ -26,7 +27,7 @@ function FindTeam() {
       });
       setTeams(response.data);
     } catch (error) {
-      console.error("Error fetching teams", error);
+      console.log("Error fetching teams", error);
     } finally {
       setLoading(false);
     }
@@ -37,7 +38,7 @@ function FindTeam() {
       const response = await api.get("/api/sports/");
       setSports(response.data);
     } catch (error) {
-      console.error("Error fetching sports", error);
+      console.log("Error fetching sports", error);
     }
   };
 
@@ -83,6 +84,11 @@ function FindTeam() {
                 key={team.id}
                 className="border rounded-lg shadow p-4 bg-white"
               >
+                <img
+                   src={getSportLogo(team.sport?.name)}
+                   alt={`${team.sport?.name} logo`}
+                   className="w-12 h-12 object-contain rounded-full border"
+                />
                 <h2 className="text-xl font-semibold mb-2">{team.name}</h2>
                 <p className="text-sm text-gray-600 mb-2">
                   Sport: {team.sport?.name || "N/A"}

@@ -41,12 +41,12 @@ function TeamMatch({ teamId }) {
           if (error.response?.status === 404) {
             setAvailabilities((prev) => ({ ...prev, [match.id]: undefined }));
           } else {
-            console.error(`Error fetching availability for match ${match.id}:`, error);
+            console.log(`Error fetching availability for match ${match.id}:`, error);
           }
         }
       }
     } catch (err) {
-      console.error("Failed to fetch matches:", err);
+      console.log("Failed to fetch matches:", err);
       // TODO: You could set an error state here and show a message to the user
     } finally {
       setLoading(false);
@@ -61,7 +61,7 @@ function TeamMatch({ teamId }) {
       });
       setAvailabilities((prev) => ({ ...prev, [matchId]: attending }));
     } catch (err) {
-      console.error("Failed to set availability", err);
+      console.log("Failed to set availability", err);
     }
   };
 

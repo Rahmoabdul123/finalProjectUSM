@@ -15,7 +15,7 @@ function MyTeams() {
         const res = await api.get("/api/my-teams/"); // Fetch approved teams for the current user
         setTeams(res.data);
       } catch (err) {
-        console.error("Failed to fetch teams", err);
+        console.log("Failed to fetch teams", err);
       }
     };
     fetchTeams();

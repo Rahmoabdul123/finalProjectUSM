@@ -24,7 +24,7 @@ function Form({ route, method }) {
                 const res = await api.get("/api/universities/");
                 setUniversities(res.data);
             } catch (error) {
-                console.error("Error fetching universities:", error);
+              console.log("Error fetching universities:", error);
             }
         }
         fetchUniversities();
@@ -63,7 +63,7 @@ function Form({ route, method }) {
             }
         } catch (error) {
             alert("Something went wrong. Please try again.");
-            console.error(error);
+            console.log(error);
         } finally {
             setLoading(false);
         }
@@ -74,7 +74,7 @@ function Form({ route, method }) {
         {/* Left side - Form */}
         <div className="flex flex-1 justify-center items-center bg-white">
           <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg px-12 py-10 w-full max-w-md">
-            <img src="/images/USMLogo.png" alt="USM Logo" className="w-32 mx-auto mb-4" />
+            <img src="/images/logoFinal.png" alt="USM Logo" className="w-32 mx-auto mb-4" />
             <h1 className="text-2xl font-semibold text-center mb-4">{name}</h1>
   
             {method === "register" && (

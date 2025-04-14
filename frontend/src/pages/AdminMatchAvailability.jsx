@@ -24,7 +24,7 @@ function AdminMatchAvailability() {
         setHomeTeamName(res.data.home_team);
         setAwayTeamName(res.data.away_team);
       } catch (err) {
-        console.error("Failed to load match availability", err);
+        console.log("Failed to load match availability", err);
         // TODO: Add error UI or retry logic
       }
     };

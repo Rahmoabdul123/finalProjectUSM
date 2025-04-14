@@ -3,7 +3,9 @@ import { useState } from "react";
 import TeamMates from "../components/TeamMates";
 import TeamMatch from "../components/TeamMatch";
 import MyLeagueStandings from "../components/MyLeagueStandings";
-import StudentHeader from "../components/studentHeader"; // Optional: Can be re-enabled later
+import StudentHeader from "../components/studentHeader";
+import UpdatePosition from "../components/UpdatePosition";
+import TopScorers from "../components/TopScorers";
 
 /**
  * Displays a homepage for a selected team.
@@ -14,7 +16,6 @@ function TeamHomepage() {
   const team = state?.team;
   const [section, setSection] = useState("members"); // Tracks which section is currently active
 
-  // Show fallback UI if no team is passed in navigation state
   if (!team) {
     return (
       <div className="p-8">
@@ -73,6 +74,20 @@ function TeamHomepage() {
                 League
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => setSection("topScorers")}
+                className={`w-full text-left px-4 py-2 rounded ${
+                  section === "topScorers"
+                    ? "bg-blue-600 text-white"
+                    : "hover:bg-gray-200"
+                }`}
+              >
+                Top Scorers
+              </button>
+          </li>
+
+
           </ul>
         </aside>
 
@@ -81,7 +96,7 @@ function TeamHomepage() {
           <h1 className="text-3xl font-bold mb-6">Welcome to {team.name}!</h1>
 
           <img
-            src="/images/USMLogo.png"
+            src="/images/logoFinal-removed-bg.png"
             alt="University Logo"
             className="h-20 mb-6"
           />
@@ -91,7 +106,7 @@ function TeamHomepage() {
             {team.university.name}.
           </p>
 
-          {section === "members" && <TeamMates teamId={team.id} />}
+          {/* {section === "members" && <TeamMates teamId={team.id} /> } */}
           {section === "matches" && <TeamMatch teamId={team.id} />}
           {section === "league" && (
             <MyLeagueStandings
@@ -99,6 +114,15 @@ function TeamHomepage() {
               leagueId={team.league.id}
               teamName={team.name}
             />
+          )}
+          {section === "members" && (
+            <>
+              <TeamMates teamId={team.id} />
+              <UpdatePosition teamId={team.id} />
+            </>
+          )}
+          {section === "topScorers" && (
+          <TopScorers teamId={team.id} leagueId={team.league.id} />
           )}
         </main>
       </div>

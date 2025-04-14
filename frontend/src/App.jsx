@@ -11,7 +11,7 @@ import PendingRequest from "./pages/PendingRequest"
 import TeamHomepage from "./pages/TeamHomepage"
 import MyTeams from "./pages/MyTeams"
 import LeagueStandingsWrapper from "./pages/LeagueStandingsWrapper";
-import LeagueFind from "./pages/LeagueFind";
+import LeagueFind from "./components/LeagueFind";
 import AdminUniTeam from "./pages/AdminUniTeam";
 import AdminTeamFixtures from "./pages/AdminTeamFixtures";
 import AdminTeamMembers from "./pages/AdminTeamMembers";

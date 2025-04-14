@@ -8,7 +8,7 @@ const studentHeader = () => {
       <div className="flex items-center justify-between">
         {/* Logo Left */}
         <Link to="/student-dashboard">
-          <img src="/images/USMLogo.png" alt="USM Logo" className="w-32" />
+          <img src="/images/logoFinalBlack-removebg.png" alt="USM Logo" className="w-32" />
         </Link>
 
         {/* Center Nav - Equal spacing */}
@@ -31,14 +31,13 @@ const studentHeader = () => {
             <div className="absolute left-1/2 -translate-x-1/2 top-full w-48 bg-white text-black rounded shadow-lg
               opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50 
               pointer-events-auto py-1">
-              <Link to="/my-league" className="block px-4 py-2 hover:bg-gray-100">My League</Link>
               <Link to="/search-league" className="block px-4 py-2 hover:bg-gray-100">Search League</Link>
             </div>
           </div>
 
           {/* Fixtures */}
           <div className="relative group inline-block">
-            <div className="hover:text-gray-300 cursor-pointer">Fixtures</div>
+            <div className="hover:text-gray-300 cursor-pointer">My Goals</div>
             <div className="absolute left-1/2 -translate-x-1/2 top-full w-48 bg-white text-black rounded shadow-lg
               opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50 
               pointer-events-auto py-1">
