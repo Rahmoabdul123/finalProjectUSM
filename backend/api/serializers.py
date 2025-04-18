@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Note, University, TeamMembership, Team, Sport, Match,MatchAvailability,LeagueTable,PlayerGoal
+from .models import University, TeamMembership, Team, Sport, Match,MatchAvailability,LeagueTable,PlayerGoal
+from django.contrib.auth.password_validation import validate_password
 
 User = get_user_model()  # Get the custom user model
 
@@ -42,6 +43,35 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         return data
 
 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate_old_password(self, value):
+        user = self.context["request"].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password is incorrect.")
+        return value
+
+    def validate(self, data):
+        if data["new_password"] != data["confirm_password"]:
+            raise serializers.ValidationError("New passwords do not match.")
+        validate_password(data["new_password"], self.context["request"].user)
+        return data
+    
+
+class UserProfileDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
+
+    def validate_email(self, value):
+        user = self.context["request"].user
+        if User.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise serializers.ValidationError("Email already in use.")
+        return value
+    
 # Serializer for Sport model
 class SportSerializer(serializers.ModelSerializer):
     class Meta:

@@ -2,17 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 import StudentHeader from "../components/studentHeader";
+import { getSportLogo } from "../components/SportsLogoIcon";
 
 function MyTeams() {
-  // State to store the list of approved teams the student is in
   const [teams, setTeams] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch the student's teams on component mount
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const res = await api.get("/api/my-teams/"); // Fetch approved teams for the current user
+        const res = await api.get("/api/my-teams/");
         setTeams(res.data);
       } catch (err) {
         console.log("Failed to fetch teams", err);
@@ -22,24 +21,38 @@ function MyTeams() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       <StudentHeader />
-      <div className="flex-1 p-6"> {/* Ensure the content takes the remaining space */}
-        <h1 className="text-2xl font-bold mb-4">My Teams</h1>
-        {/* Show a message if the user hasn't joined any team */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">My Teams</h1>
+
         {teams.length === 0 ? (
-          <p>You have not joined any teams yet.</p>
+          <p className="text-gray-600">You have not joined any teams yet.</p>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {teams.map((team) => (
               <div
                 key={team.id}
-                className="border p-4 rounded shadow cursor-pointer hover:bg-gray-100"
+                tabIndex={0}
+                role="button"
                 onClick={() => navigate("/team-homepage", { state: { team } })}
+                onKeyDown={(e) => e.key === "Enter" && navigate("/team-homepage", { state: { team } })}
+                className="bg-white border border-gray-200 rounded-xl p-6 shadow-md hover:shadow-lg hover:scale-[1.01] transition-transform cursor-pointer outline-none focus:ring-2 focus:ring-blue-400"
               >
-                <h2 className="text-xl font-semibold">{team.name}</h2>
-                <p className="text-gray-600">Sport: {team.sport.name}</p>
-                <p className="text-gray-600">University: {team.university.name}</p>
+                <div className="flex items-center gap-4 mb-4">
+                  <img
+                    src={getSportLogo(team.sport.name)}
+                    alt={`${team.sport.name} logo`}
+                    className="w-12 h-12 rounded-full object-contain border"
+                  />
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-800">{team.name}</h2>
+                    <p className="text-sm text-gray-500">{team.sport.name}</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600">
+                  University: <span className="font-medium">{team.university.name}</span>
+                </p>
               </div>
             ))}
           </div>
@@ -50,3 +63,4 @@ function MyTeams() {
 }
 
 export default MyTeams;
+

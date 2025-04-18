@@ -11,12 +11,13 @@ import PendingRequest from "./pages/PendingRequest"
 import TeamHomepage from "./pages/TeamHomepage"
 import MyTeams from "./pages/MyTeams"
 import LeagueStandingsWrapper from "./pages/LeagueStandingsWrapper";
-import LeagueFind from "./components/LeagueFind";
 import AdminUniTeam from "./pages/AdminUniTeam";
 import AdminTeamFixtures from "./pages/AdminTeamFixtures";
 import AdminTeamMembers from "./pages/AdminTeamMembers";
 import AdminMatchAvailability from "./pages/AdminMatchAvailability";
 import AdminTeamDetails from "./pages/AdminTeamDetails";
+import ProfileSetting from "./pages/ProfileSetting";
+import AllLeagues from "./pages/AllLeagues"
 
 
 function Logout() {
@@ -107,8 +108,27 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/search-league" element={<LeagueFind />} />
-        <Route path="/leagues/:leagueId/standings" element={<LeagueStandingsWrapper />} />
+
+        <Route
+          path="/search-league"
+          element={
+            <ProtectedRoute >
+              <AllLeagues />
+            </ProtectedRoute>
+          }
+        />
+        {/* <Route path="/search-league" element={<LeagueFind />} /> */}
+        {/* <Route path="/leagues/:leagueId/standings" element={<LeagueStandingsWrapper />} /> */}
+
+        <Route
+          path="/leagues/:leagueId/standings"
+          element={
+            <ProtectedRoute >
+              <LeagueStandingsWrapper />
+            </ProtectedRoute>
+          }
+        />
+        
         <Route
           path="/admin-teams"
           element={
@@ -149,6 +169,15 @@ function App() {
           element={
             <ProtectedRoute requiredRole="Admin">
               <AdminTeamDetails />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <ProfileSetting />
             </ProtectedRoute>
           }
         />

@@ -1,12 +1,12 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
-import TeamMates from "../components/TeamMates";
-import TeamMatch from "../components/TeamMatch";
-import MyLeagueStandings from "../components/MyLeagueStandings";
+import TeamMates from "../components/students/TeamMates";
+import TeamMatch from "../components/students/TeamMatch";
+import MyLeagueStandings from "../components/Leagues/MyLeagueStandings";
 import StudentHeader from "../components/studentHeader";
-import UpdatePosition from "../components/UpdatePosition";
-import TopScorers from "../components/TopScorers";
-
+import UpdatePosition from "../components/students/UpdatePosition";
+import TopScorers from "../components/students/TopScorers";
+import Footer from "../components/Footer";
 /**
  * Displays a homepage for a selected team.
  * Includes navigation to view team members, match schedule, and league standings.
@@ -22,7 +22,6 @@ function TeamHomepage() {
         <p className="text-red-600 font-semibold">
           Oops! No team information was found.
         </p>
-        {/* TODO: Consider redirecting to dashboard or showing a link to return */}
       </div>
     );
   }
@@ -43,7 +42,7 @@ function TeamHomepage() {
                 onClick={() => setSection("members")}
                 className={`w-full text-left px-4 py-2 rounded ${
                   section === "members"
-                    ? "bg-blue-600 text-white"
+                    ? "bg-green-600 text-white"
                     : "hover:bg-gray-200"
                 }`}
               >
@@ -105,8 +104,6 @@ function TeamHomepage() {
             You are now a member of the {team.sport.name} team at{" "}
             {team.university.name}.
           </p>
-
-          {/* {section === "members" && <TeamMates teamId={team.id} /> } */}
           {section === "matches" && <TeamMatch teamId={team.id} />}
           {section === "league" && (
             <MyLeagueStandings
@@ -126,6 +123,7 @@ function TeamHomepage() {
           )}
         </main>
       </div>
+      <Footer />
     </div>
   );
 }

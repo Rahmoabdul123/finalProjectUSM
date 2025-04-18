@@ -4,6 +4,7 @@ import api from "../api";
 import StudentHeader from "../components/studentHeader";
 import LoadingIndicator from "../components/LoadingIndicator";
 import { getSportLogo } from "../components/SportsLogoIcon";
+import Footer from "../components/Footer";
 
 function FindTeam() {
   const [teams, setTeams] = useState([]);
@@ -54,51 +55,62 @@ function FindTeam() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <StudentHeader />
+  <div className="flex flex-col min-h-screen bg-gray-50">
+    <StudentHeader />
 
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Teams at Your University</h1>
+    <main className="flex-1 px-4 py-8 sm:px-6 lg:px-20">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">
+          Teams at Your University
+        </h1>
 
-        {/* Sport Filter Dropdown */}
-        <select
-          value={selectedSport}
-          onChange={(e) => setSelectedSport(e.target.value)}
-          className="mb-6 px-4 py-2 border rounded"
-        >
-          <option value="">All Sports</option>
-          {sports.map((sport) => (
-            <option key={sport.id} value={sport.name}>
-              {sport.name}
-            </option>
-          ))}
-        </select>
+        {/* Filter Dropdown */}
+        <div className="mb-6">
+          <label htmlFor="sportFilter" className="sr-only">Filter by sport</label>
+          <select
+            id="sportFilter"
+            value={selectedSport}
+            onChange={(e) => setSelectedSport(e.target.value)}
+            className="w-full max-w-xs p-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300"
+          >
+            <option value="">All Sports</option>
+            {sports.map((sport) => (
+              <option key={sport.id} value={sport.name}>
+                {sport.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
-        {/* Show loading spinner while data is being fetched */}
+        {/* Loading */}
         {loading ? (
           <LoadingIndicator />
         ) : (
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {teams.map((team) => (
               <div
                 key={team.id}
-                className="border rounded-lg shadow p-4 bg-white"
+                className="bg-white border border-gray-200 rounded-xl shadow hover:shadow-lg transition p-5 flex flex-col justify-between"
               >
-                <img
-                   src={getSportLogo(team.sport?.name)}
-                   alt={`${team.sport?.name} logo`}
-                   className="w-12 h-12 object-contain rounded-full border"
-                />
-                <h2 className="text-xl font-semibold mb-2">{team.name}</h2>
-                <p className="text-sm text-gray-600 mb-2">
-                  Sport: {team.sport?.name || "N/A"}
-                </p>
-                <p className="text-sm text-gray-600 mb-4">
-                  University: {team.university?.name || "N/A"}
-                </p>
+                <div className="flex items-center gap-4 mb-4">
+                  <img
+                    src={getSportLogo(team.sport?.name)}
+                    alt={`${team.sport?.name} logo`}
+                    className="w-14 h-14 rounded-full border object-contain"
+                  />
+                  <h2 className="text-lg font-bold text-gray-800">
+                    {team.name}
+                  </h2>
+                </div>
+
+                <div className="text-sm text-gray-600 space-y-1 mb-4">
+                  <p><span className="font-medium">Sport:</span> {team.sport?.name || "N/A"}</p>
+                  <p><span className="font-medium">University:</span> {team.university?.name || "N/A"}</p>
+                </div>
+
                 <button
                   onClick={() => handleJoinRequest(team.id)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                  className="mt-auto bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
                 >
                   Request to Join
                 </button>
@@ -107,15 +119,17 @@ function FindTeam() {
           </div>
         )}
 
-        {/* Optional message alert below content */}
+        {/* Feedback message */}
         {message && (
-          <div className="mt-4 p-2 bg-yellow-100 text-yellow-800 rounded">
+          <div className="mt-6 p-4 rounded-lg bg-yellow-100 text-yellow-800 text-center text-sm font-medium shadow">
             {message}
           </div>
         )}
       </div>
-    </div>
-  );
+    </main>
+    <Footer />
+  </div>
+);
 }
 
 export default FindTeam;

@@ -52,6 +52,8 @@ function Form({ route, method }) {
                 localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
                 localStorage.setItem("role", res.data.role);
                 localStorage.setItem("university", res.data.university);
+                localStorage.setItem("first_name", res.data.first_name);
+                localStorage.setItem("last_name", res.data.last_name);
 
                 if (res.data.role === "Admin") {
                     navigate("/admin-dashboard");

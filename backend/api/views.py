@@ -4,8 +4,8 @@ from rest_framework import generics
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import University, Note,Team,TeamMembership,Sport,Match,MatchAvailability,LeagueTable,PlayerGoal
-from .serializers import UserSerializer, UniversitySerializer,TeamSerializer,TeamMembershipSerializer,SportSerializer,MatchSerializer,MatchAvailabilitySerializer,LeagueTableSerializer,PlayerGoalSerializer
+from .models import University,Team,TeamMembership,Sport,Match,MatchAvailability,LeagueTable,PlayerGoal
+from .serializers import UserSerializer, UniversitySerializer,TeamSerializer,TeamMembershipSerializer,SportSerializer,MatchSerializer,MatchAvailabilitySerializer,LeagueTableSerializer,PlayerGoalSerializer,ChangePasswordSerializer,UserProfileDetailSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
 from rest_framework.views import APIView
@@ -152,7 +152,32 @@ class HandleJoinRequestView(APIView):
         return Response({"detail": "Request rejected."})
     
 
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangePasswordSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            user = request.user
+            user.set_password(serializer.validated_data["new_password"])
+            user.save()
+            return Response({"detail": "Password changed successfully."}, status=200)
+        return Response(serializer.errors, status=400)
+
 #-----------------------------------------------------------------------------------------------------------------------    
+class UserProfileDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        serializer = UserProfileDetailSerializer(
+            request.user, data=request.data, partial=True, context={"request": request}
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "User details updated successfully."})
+        return Response(serializer.errors, status=400)
+
+
 #this would list out the teams that the user is in
 
 class MyTeamsView(APIView):
@@ -402,32 +427,32 @@ class EditMatchScoreView(APIView):
         except Match.DoesNotExist:
             return Response({"detail": "Match not found."}, status=404)
 
+        # Make sure the admin is from the same university
         if match.home_team.university != request.user.university and match.away_team.university != request.user.university:
             return Response({"detail": "You can only edit matches from your university."}, status=403)
-
-        match_status = request.data.get("status")
-        if match_status in ["Pending", "Played"]:
-            match.status = match_status
-
-        if match.status != "Played":
-            return Response({"detail": "Can only edit scores for matches that have been played."}, status=400)
 
         home_score = request.data.get("home_score")
         away_score = request.data.get("away_score")
         match_date = request.data.get("date")
+        match_status = request.data.get("status")
 
-        if home_score is None or away_score is None:
-            return Response({"detail": "Both scores are required."}, status=400)
-
-        match.home_score = home_score
-        match.away_score = away_score
-
+        # Allow updating date regardless of status
         if match_date:
             match.date = match_date
 
-        match.save()
+        # If scores are being submitted
+        if home_score is not None and away_score is not None:
+            match.home_score = home_score
+            match.away_score = away_score
+            match.status = "Played"  # Automatically mark as played if scores are given
 
-        return Response({"detail": "Match scores updated successfully."}, status=200)
+        elif match_status:  # Allow setting status manually to "Pending" etc.
+            if match_status in ["Pending", "Played"]:
+                match.status = match_status
+
+        # Save and return
+        match.save()
+        return Response({"detail": "Match updated successfully."}, status=200)
     
 
 # Admin view to list all players in a specific team

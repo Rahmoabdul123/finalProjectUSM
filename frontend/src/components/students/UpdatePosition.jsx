@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../api";
+import api from "../../api";
 
 function UpdatePosition({ teamId }) {
   const [position, setPosition] = useState("");
@@ -26,7 +26,7 @@ function UpdatePosition({ teamId }) {
 
   const handleSave = async () => {
     if (!position) {
-      setFeedback("Position can't be empty"); // casual language
+      setFeedback("Position can't be empty");
       return;
     }
 

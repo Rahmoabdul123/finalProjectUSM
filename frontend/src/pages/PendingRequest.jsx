@@ -45,38 +45,51 @@ function PendingRequest() {
   
 
   return (
-    <div className="p-4">
+    <div className="min-h-screen bg-gray-50">
       <AdminHeader />
-      <h1 className="text-2xl font-bold mb-4">Pending Join Requests</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : requests.length === 0 ? (
-        <p>No pending requests</p>
-        //  displays the list of requests
-      ) : (
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {requests.map((req) => (
-            <div key={req.id} className="border rounded-lg p-4 shadow bg-white">
-              <p className="font-semibold">{req.user_full_name}</p>
-              <p className="text-gray-700 text-sm mb-2">Requesting to join: {req.team_name}</p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleAction(req.id, "Approve")}
-                  className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-                >
-                  Approve
-                </button>
-                <button
-                  onClick={() => handleAction(req.id, "Reject")}
-                  className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-                >
-                  Reject
-                </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Pending Join Requests</h1>
+  
+        {loading ? (
+          <p className="text-gray-600">Loading...</p>
+        ) : requests.length === 0 ? (
+          <p className="text-gray-600 italic">No pending requests at the moment.</p>
+        ) : (
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {requests.map((req) => (
+              <div
+                key={req.id}
+                className="bg-white border border-gray-200 rounded-xl shadow-md p-6 flex flex-col justify-between"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-blue-100 text-blue-800 rounded-full flex items-center justify-center font-bold text-xl">
+                    {req.user_full_name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-lg font-semibold text-gray-800">{req.user_full_name}</p>
+                    <p className="text-sm text-gray-600">Wants to join: <span className="font-medium">{req.team_name}</span></p>
+                  </div>
+                </div>
+  
+                <div className="flex gap-3 mt-4">
+                  <button
+                    onClick={() => handleAction(req.id, "Approve")}
+                    className="flex-1 bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleAction(req.id, "Reject")}
+                    className="flex-1 bg-red-600 text-white py-2 rounded-lg font-semibold hover:bg-red-700 transition"
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import AdminNavi from "../components/AdminNavi";
-import AdminTeams from "../components/AdminTeams";
+import AdminTeams from "../components/AdminRole/AdminTeams";
 // This is when you click on view my university teams on NAV
 function AdminUniTeam() {
   useEffect(() => {

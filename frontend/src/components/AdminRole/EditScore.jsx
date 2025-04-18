@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../api";
+import api from "../../api";
 
 function EditScore({ match, onClose }) {
   const [homeScore, setHomeScore] = useState(match.home_score ?? "");
@@ -10,18 +10,23 @@ function EditScore({ match, onClose }) {
   const [error, setError] = useState("");
 
   const handleSave = async () => {
-    if (!homeScore || !awayScore || !date) {
-      setError("All fields are required.");
+    if (!homeScore && !awayScore && !date) {
+      setError("Update one field at least");
       return;
     }
 
+    const payload = {};
+
+    if (date) payload.date = date;
+    if (homeScore !== "") payload.home_score = parseInt(homeScore);
+    if (awayScore !== "") payload.away_score = parseInt(awayScore);
+
+    if (payload.home_score !== undefined && payload.away_score !== undefined) {
+      payload.status = "Played";
+    }
+
     try {
-      await api.post(`/api/matches/${match.id}/edit-score/`, {
-        home_score: homeScore,
-        away_score: awayScore,
-        date,
-        status: "Played",
-      });
+      await api.post(`/api/matches/${match.id}/edit-score/`, payload);
 
       setMessage("Match updated.");
       setError("");
@@ -29,9 +34,9 @@ function EditScore({ match, onClose }) {
       setTimeout(() => {
         setMessage("");
         onClose();
-      }, 1000); // quicker feedback
+      }, 1000);
     } catch (err) {
-      console.log("Error saving match:", err);
+      console.error("Error saving match:", err);
       setError("Couldn't update match. Try again?");
     }
   };
@@ -92,5 +97,7 @@ function EditScore({ match, onClose }) {
 }
 
 export default EditScore;
+
+
 
 

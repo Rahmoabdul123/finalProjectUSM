@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import LeagueStandings from "../components/LeagueStandings";
+import LeagueStandings from "../components/Leagues/LeagueStandings";
 
 /**
  * Route-aware wrapper for the LeagueStandings component.
@@ -7,7 +7,6 @@ import LeagueStandings from "../components/LeagueStandings";
 const LeagueStandingsWrapper = () => {
   const { leagueId } = useParams();
 
-  // Pass the extracted ID to the core LeagueStandings component
   return <LeagueStandings leagueId={leagueId} />;
 };
 
