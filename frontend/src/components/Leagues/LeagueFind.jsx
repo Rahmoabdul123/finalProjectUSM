@@ -5,6 +5,7 @@ import LoadingIndicator from "../LoadingIndicator";
 import { Trophy } from "lucide-react"; 
 import { getSportLogo } from "../SportsLogoIcon";
 
+// This lists all of the leagues to the users
 function LeagueFind() {
   const [leagues, setLeagues] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +38,8 @@ function LeagueFind() {
         {leagues.map((league) => (
           <div
             key={league.id}
-            onClick={() => navigate(`/leagues/${league.id}/standings`)}
+            // When Clicked on it will go to LeagueStandings.jsx
+            onClick={() => navigate(`/leagues/${league.id}/standings`)} 
             className="cursor-pointer p-5 rounded-2xl bg-white shadow hover:shadow-lg hover:scale-[1.02] transition-transform duration-200"
           >
             <div className="flex items-center gap-3 mb-3">

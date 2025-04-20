@@ -1,7 +1,9 @@
 import { Navigate } from "react-router-dom";
 
+// Helps with automatic Route redirection
+//Used in App.jsx
 function RedirectRole() {
-    const userRole = localStorage.getItem("userRole");
+    const userRole = localStorage.getItem("role"); 
 
     if (userRole === "Admin") {
         return <Navigate to="/admin-dashboard" />;

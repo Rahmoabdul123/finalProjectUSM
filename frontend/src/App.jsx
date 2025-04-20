@@ -6,7 +6,7 @@ import NotFound from "./pages/NotFound"
 import AdminDashboard from "./pages/AdminDashboard"; 
 import StudentDashboard from "./pages/StudentDashboard";
 import ProtectedRoute from "./components/ProtectedRoute"
-import JoinTeam from "./pages/findTeam";
+import FindTeam from "./pages/FindTeam";
 import PendingRequest from "./pages/PendingRequest"
 import TeamHomepage from "./pages/TeamHomepage"
 import MyTeams from "./pages/MyTeams"
@@ -18,6 +18,7 @@ import AdminMatchAvailability from "./pages/AdminMatchAvailability";
 import AdminTeamDetails from "./pages/AdminTeamDetails";
 import ProfileSetting from "./pages/ProfileSetting";
 import AllLeagues from "./pages/AllLeagues"
+import RedirectRole from "./components/RedirectRoles";
 
 
 function Logout() {
@@ -68,11 +69,12 @@ function App() {
         <Route path="/logout" element={<Logout />} />
         <Route path="/register" element={<RegisterAndLogout />} />
         <Route path="*" element={<NotFound />}></Route>
+        {/* When user manually writes below, it will read the roles and redirects them tot the correct page */}
         <Route
           path="/"
           element={
             <ProtectedRoute>
-              <redirectRole />
+              <RedirectRole />
             </ProtectedRoute>
           }
         />
@@ -80,7 +82,7 @@ function App() {
           path="/join-team"
           element={
             <ProtectedRoute requiredRole="Student">
-              <JoinTeam />
+              <FindTeam />
             </ProtectedRoute>
           }
         />

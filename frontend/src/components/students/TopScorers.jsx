@@ -3,6 +3,7 @@ import api from "../../api";
 import LoadingIndicator from "../LoadingIndicator";
 import { Medal } from "lucide-react"; 
 
+// Component: Displays Top 5 Scorers for both the Team and League
 function TopScorers({ teamId, leagueId }) {
   const [teamScorers, setTeamScorers] = useState([]);
   const [leagueScorers, setLeagueScorers] = useState([]);

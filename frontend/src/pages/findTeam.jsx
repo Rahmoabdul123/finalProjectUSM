@@ -71,7 +71,7 @@ function FindTeam() {
             id="sportFilter"
             value={selectedSport}
             onChange={(e) => setSelectedSport(e.target.value)}
-            className="w-full max-w-xs p-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300"
+            className="w-full max-w-xs p-2 border border-red-900 rounded-lg text-gray-700 focus:ring focus:ring-blue-300"
           >
             <option value="">All Sports</option>
             {sports.map((sport) => (
@@ -110,7 +110,7 @@ function FindTeam() {
 
                 <button
                   onClick={() => handleJoinRequest(team.id)}
-                  className="mt-auto bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
+                  className="mt-auto bg-blue-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition transform hover:scale-105 duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   Request to Join
                 </button>

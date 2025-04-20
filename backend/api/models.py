@@ -4,19 +4,19 @@ from django.conf import settings
 
 
 # ----------------------------------------------------------------------------------------------------------
-# I want users to register using email instead of username so using UniveristyUser.
+# I want users to register using email instead of username so using UniveristyUser-> a custom user manager.
 class UniversityUser(BaseUserManager):
     def create_user(self, email, password=None, university=None, first_name=None, last_name=None, **extra_fields):
         if not email:
             raise ValueError("Email is required")
         if not university:
-            raise ValueError("University is required")
+            raise ValueError("Please choose a Univeristy")
         if not first_name or not last_name:
             raise ValueError("First name and Last name are required")
         
         # Normalise the email
         email = self.normalize_email(email)
-        extra_fields.pop("username", None)
+        extra_fields.pop("username", None) # To remove the username field if it does get passed
 
         # Automatically assigns first user of the university and the rest become students
         user_count = User.objects.filter(university=university).count()
@@ -30,8 +30,8 @@ class UniversityUser(BaseUserManager):
             last_name=last_name,
             **extra_fields
         )
-        user.set_password(password)
-        user.save(using=self._db)
+        user.set_password(password) #hashes password
+        user.save(using=self._db) #saves user instance into the database
         return user
     
     #create superuser with admin
@@ -74,7 +74,6 @@ class User(AbstractUser):
         return f"{self.first_name} {self.last_name} ({self.role} - {self.university.name})"
 
 
-# ----------------------------------------------------------------------------------------------------------
 
 # ----------------------------------------------------------------------------------------------------------
 #represents the types of sports

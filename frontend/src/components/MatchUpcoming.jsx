@@ -3,6 +3,7 @@ import api from "../api";
 import LoadingIndicator from "./LoadingIndicator";
 import { Home, Users , Clock} from "lucide-react"; // Using icons from lucide-react
 
+// Shows the next upcoming match (Used in the student dashboard)
 function MatchUpcoming() {
   const [match, setMatch] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -11,9 +12,7 @@ function MatchUpcoming() {
     const fetchMatches = async () => {
       try {
         const res = await api.get("/api/my-matches/");
-        if (res.data.upcoming && res.data.upcoming.length > 0) {
-          setMatch(res.data.upcoming[0]);
-        }
+        setMatch(res.data);
       } catch (err) {
         console.error("Failed to fetch matches", err);
       } finally {
@@ -29,7 +28,7 @@ function MatchUpcoming() {
 
   return (
     <div className="bg-white shadow-lg p-8 rounded-xl mt-6 max-w-3xl mx-auto text-center border">
-      <h2 className="text-3xl font-bold text-blue-800 mb-6">Upcoming Match</h2>
+      <h2 className="text-5xl font-bold text-black-800 mb-6">Upcoming Match</h2>
 
       <div className="flex items-center justify-center space-x-2 mb-6">
         <Clock />
@@ -54,7 +53,7 @@ function MatchUpcoming() {
       </div>
 
       {/* Date */}
-      <p className="mt-6 text-lg text-gray-700">
+      <p className="mt-6 text-2xl text-gray-700">
          {new Date(match.date).toLocaleDateString()}
       </p>
     </div>

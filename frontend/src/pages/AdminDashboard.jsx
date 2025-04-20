@@ -4,6 +4,7 @@ import AdminTeams from "../components/AdminRole/AdminTeams";
 import PendingSummary from "../components/AdminRole/PendingSummary";
 import LeagueFind from   "../components/Leagues/LeagueFind";
 import { Users } from "lucide-react";
+import Footer from "../components/Footer";
 
  
 
@@ -40,6 +41,7 @@ function AdminDashboard() {
         </div>
         <LeagueFind />
       </div>
+      <Footer />
     </div>
   );
 }

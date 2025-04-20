@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import University,Team,TeamMembership,Sport,Match,MatchAvailability,LeagueTable,PlayerGoal
-from .serializers import UserSerializer, UniversitySerializer,TeamSerializer,TeamMembershipSerializer,SportSerializer,MatchSerializer,MatchAvailabilitySerializer,LeagueTableSerializer,PlayerGoalSerializer,ChangePasswordSerializer,UserProfileDetailSerializer
+from .serializers import UserSerializer, UniversitySerializer,TeamSerializer,TeamMembershipSerializer,TeamMemberWithGoalsSerializer,SportSerializer,MatchSerializer,MatchAvailabilitySerializer,LeagueTableSerializer,PlayerGoalSerializer,ChangePasswordSerializer,UserProfileDetailSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
 from rest_framework.views import APIView
@@ -14,13 +14,13 @@ from django.db.models import Sum
 
 
 User = get_user_model()
-# -----------------------------------------------------------------------------------------------------
+
 # Custom token view
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-# -----------------------------------------------------------------------------------------------------
+
 # Dashboard route that returns a different message for Admins and Students
 class UserDashboardView(APIView):
     permission_classes = [AllowAny]
@@ -36,39 +36,39 @@ class UserDashboardView(APIView):
         else:
             return Response({"message": "User role not found."}, status=400)
 
-# -----------------------------------------------------------------------------------------------------
+
 # Endpoint to allow user registration (sign-up)
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-# -----------------------------------------------------------------------------------------------------
+
 # Public endpoint to list all universities
 class ListUniversitiesView(generics.ListAPIView):
     queryset = University.objects.all()
     serializer_class = UniversitySerializer
     permission_classes = [AllowAny] #To allow it be shown in the registration
 
-# -----------------------------------------------------------------------------------------------------
+
 # Get teams based on user's university and optional sport filter
 class TeamsByUniversityView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        university = request.user.university
+        university = request.user.university # Finds the university the user belongs to
         sport = request.GET.get('sport')
 
-        teams = Team.objects.filter(university=university)
+        teams = Team.objects.filter(university=university) # Filters all teams that belongs to that specific university
 
         if sport:
-            teams = teams.filter(sport__name=sport)
+            teams = teams.filter(sport__name=sport) # narrows the teams down depending on what sport is chosen
 
         serializer = TeamSerializer(teams, many=True)
         return Response(serializer.data)
 
 
-# -----------------------------------------------------------------------------------------------------
+
 # Teams: Request to join a team (students only, must be same university)
 
 class RequestJoinTeamView(APIView):
@@ -79,10 +79,12 @@ class RequestJoinTeamView(APIView):
             team = Team.objects.get(id=team_id)
         except Team.DoesNotExist:
             return Response({"detail": "Team not found."}, status=403)
-        # makes sure user is only joining teams from their university
+        
+        # ensures the user's uni matches the team's uni
         if request.user.university != team.university:
             return Response({"detail": "You can only join teams from your university."}, status=403)
-        # Prevent students from duplicating the requests if they already joined a team
+        
+        # Prevent students requesting the same team more than once
         if TeamMembership.objects.filter(user=request.user, team=team).exists():
             return Response({"detail": "You already requested or joined this team."}, status=400)
         
@@ -92,18 +94,18 @@ class RequestJoinTeamView(APIView):
 
 
 
-#-----------------------------------------------------------------------------------------------------------------------
+
 # Ensuring admins can be the only one seeing the request and view to list all pending join requests for their university
 
 class PendingJoinRequestsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        if request.user.role != "Admin":
+        if request.user.role != "Admin": #ensures only admin can see the requests
             return Response({"detail": "Only admins can view requests."}, status=403)
 
-        university = request.user.university
-        # Get all pending join requests from the admin's university
+        university = request.user.university 
+        # retrieves all pending requests of that specific university
         requests = TeamMembership.objects.filter(
             team__university=university,
             status="Pending"
@@ -112,7 +114,7 @@ class PendingJoinRequestsView(APIView):
         serializer = TeamMembershipSerializer(requests, many=True)
         return Response(serializer.data)
 
-#-----------------------------------------------------------------------------------------------------------------------
+
 #Lists all of the sports team
 class ListSportsView(generics.ListAPIView):
     queryset = Sport.objects.all()
@@ -120,28 +122,29 @@ class ListSportsView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Admin action to approve or reject a join request
+
+# allows Admin action to approve or reject a join request
 class HandleJoinRequestView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, membership_id):
         user = request.user
 
-        if user.role != "Admin":
+        if user.role != "Admin": #only Admins can accept/reject requests
             return Response({"detail": "Only admins can manage requests."}, status=403)
 
         try:
+            # Try to find the pending membership request for this admin's university
             membership = TeamMembership.objects.get(id=membership_id, team__university=user.university)
         except TeamMembership.DoesNotExist:
             return Response({"detail": "Request not found."}, status=404)
 
-        action = request.data.get("action")
+        action = request.data.get("action") # get the action sent by the frontend
 
         if action not in ["Approve", "Reject"]:
             return Response({"detail": "Invalid action."}, status=400)
         
-         # Update membership status
+         # Update membership status based on what action was chosen
         membership.status = action
         membership.save()
 
@@ -152,6 +155,7 @@ class HandleJoinRequestView(APIView):
         return Response({"detail": "Request rejected."})
     
 
+# Admin action to approve or reject a join request
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -164,7 +168,8 @@ class ChangePasswordView(APIView):
             return Response({"detail": "Password changed successfully."}, status=200)
         return Response(serializer.errors, status=400)
 
-#-----------------------------------------------------------------------------------------------------------------------    
+
+# allows both admins and students to update their first name, last name, and email
 class UserProfileDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -184,93 +189,96 @@ class MyTeamsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        memberships = TeamMembership.objects.filter(user=request.user, status="Approve")
-        teams = [membership.team for membership in memberships]
+        #looks inside the TeamMembership table and filters the approved rows 
+        memberships = TeamMembership.objects.filter(user=request.user, status="Approve") 
+        teams = [membership.team for membership in memberships] ## Extract the teams from those memberships
         serializer = TeamSerializer(teams, many=True)
         return Response(serializer.data)
     
-#-----------------------------------------------------------------------------------------------------------------------    
-#viewing Teammates in their team
+
+# View to return all approved members of a specific team and shows goals and position
 
 
 class TeamMembersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, team_id):
-        print("Fetching members for team:", team_id)
+        print("Fetching members for team:", team_id) #helps debugging
 
         memberships = TeamMembership.objects.filter(
             team_id=team_id,
-            status__iexact="approve" # "approve" would always work regardless of casing
-        ).select_related('user')
+            status__iexact="approve"
+        ).select_related('user')# Optimize database queries by fetching related user objects in one query
 
         print("Members found:", memberships.count())
 
-        data = [
+        # Pre-fetch goals in bulk
+        goals_by_user = PlayerGoal.objects.filter(team_id=team_id)\
+            .values('user_id')\
+            .annotate(total_goals=Sum('goals'))
+        
+        #Convert goals query into a python dictionary
+        goals_dict = {item['user_id']: item['total_goals'] for item in goals_by_user}
+
+        # Build raw data
+        raw_data = [
             {
                 "id": member.user.id,
                 "full_name": f"{member.user.first_name} {member.user.last_name}",
-                "position": member.position,
-                "goals_scored": PlayerGoal.objects.filter(user=member.user, team_id=team_id).aggregate(Sum("goals"))["goals__sum"] or 0,
+                "position": member.position, # Position (can be null)
+                "goals_scored": goals_dict.get(member.user.id, 0),# Total goals scored (default to 0 if none)
+                "is_self": member.user == request.user,
             }
             for member in memberships
         ]
 
-        return Response(data)
-    
-#Viewing past and future matches in their own team (hoping to add that as a tab)
+        # Use the serializer to validate and serialize the data
+        serializer = TeamMemberWithGoalsSerializer(raw_data, many=True)
+        return Response(serializer.data)
 
+
+#showing upcoming matches across all sports the user is in
 class MyMatchesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Get all approved teams the user is part of
-        memberships = TeamMembership.objects.filter(user=request.user, status="Approve")
-        team_ids = memberships.values_list('team_id', flat=True)
+        # Find all the teams the user belongs to
+        team_ids = TeamMembership.objects.filter(
+            user=request.user, 
+            status="Approve"
+        ).values_list('team_id', flat=True)
 
-        # Match history (status = Played)
-        past_matches = Match.objects.filter(
-            status="Played"
-        ).filter(
-            home_team_id__in=team_ids
-        ) | Match.objects.filter(
-            status="Played",
-            away_team_id__in=team_ids
-        )
-
-        # Upcoming matches (status = Pending)
-        upcoming_matches = Match.objects.filter(
+        # Find the very next match
+        next_match = Match.objects.filter(
             status="Pending"
         ).filter(
-            home_team_id__in=team_ids
-        ) | Match.objects.filter(
-            status="Pending",
-            away_team_id__in=team_ids
-        )
+            Q(home_team_id__in=team_ids) | Q(away_team_id__in=team_ids)
+        ).order_by('date').first()
 
-        # Serialize and return
-        history = MatchSerializer(past_matches, many=True).data
-        upcoming = MatchSerializer(upcoming_matches, many=True).data
+        if next_match:
+            serializer = MatchSerializer(next_match)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "No upcoming matches."}, status=404)
 
-        return Response({
-            "history": history,
-            "upcoming": upcoming
-        })
 
+
+   
+#Viewing past and future matches in their own team (hoping to add that as a tab)
 class TeamMatchesView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, team_id):
+        # Fetch matches where the team is either the home or away team
         matches = Match.objects.filter(
             Q(home_team_id=team_id) | Q(away_team_id=team_id)
-        ).order_by('date')
+        ).order_by('date')# Sort matches by date from earliest
 
         serializer = MatchSerializer(matches, many=True)
         return Response(serializer.data)
 
 
-#-----------------------------------------------------------------------------------------------------------------------    
-#viewing Teammates in their team
+# Manage match availability (student: own; admin: everyone in uni)
 
 class MatchAvailabilityView(APIView):
     permission_classes = [IsAuthenticated]
@@ -283,7 +291,7 @@ class MatchAvailabilityView(APIView):
             availabilities = MatchAvailability.objects.filter(
                 match_id=match_id,
                 user__university=user.university
-            ).select_related("user")
+            ).select_related("user") # Optimize DB query by pulling user fields
 
             data = [
                 {
@@ -296,7 +304,7 @@ class MatchAvailabilityView(APIView):
             return Response(data)
 
         else:
-            # Students see their own availability
+            # Students see their own availability ("you're marked as Available")
             try:
                 availability = MatchAvailability.objects.get(match_id=match_id, user=user)
                 serializer = MatchAvailabilitySerializer(availability)
@@ -306,11 +314,12 @@ class MatchAvailabilityView(APIView):
 
     def post(self, request, match_id):
         user = request.user
-        is_attending = request.data.get("is_attending")
+        is_attending = request.data.get("is_attending") #true or false in database
 
         if is_attending is None:
             return Response({"detail": "Missing 'is_attending' value."}, status=400)
-
+        
+        # Create a new availability record OR update the existing one
         availability, created = MatchAvailability.objects.update_or_create(
             match_id=match_id,
             user=user,
@@ -334,9 +343,8 @@ class LeagueStandingsView(APIView):
         matches = Match.objects.filter(league_id=league_id, status="Played")
 
         standings = []
-
         for team in teams:
-            # Initialize stats for the team
+            # Initial stats
             stats = {
                 "played": 0,
                 "won": 0,
@@ -354,9 +362,9 @@ class LeagueStandingsView(APIView):
 
                 if not (is_home or is_away):
                     continue  # Skip matches where this team didn't participate
+                # Updating Stats depending on the results 
 
                 stats["played"] += 1
-
                 # Determine which side the team played and assign scores accordingly
                 team_score = match.home_score if is_home else match.away_score
                 opponent_score = match.away_score if is_home else match.home_score
@@ -392,8 +400,9 @@ class LeagueStandingsView(APIView):
         return Response(standings)
 
 
+#shows all of the leagues
 class ListLeaguesView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         leagues = LeagueTable.objects.all()
@@ -401,6 +410,7 @@ class ListLeaguesView(APIView):
         return Response(serializer.data)
 
 
+# view to find all teams specifically from the univeristy that the admin belongs to
 class AdminUniversityTeamsView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -408,13 +418,14 @@ class AdminUniversityTeamsView(APIView):
         if request.user.role != "Admin":
             return Response({"detail": "Only admins can view this."}, status=403)
 
-        university = request.user.university
-        teams = Team.objects.filter(university=university)
+        university = request.user.university # gets the university the admin belongs to
+        teams = Team.objects.filter(university=university)  #filters the teams that belong to that same university
         serializer = TeamSerializer(teams, many=True)
         return Response(serializer.data)
 
 
 
+# Admins being able to only edit the score
 class EditMatchScoreView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -456,6 +467,7 @@ class EditMatchScoreView(APIView):
     
 
 # Admin view to list all players in a specific team
+
 class AdminTeamMembersView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -467,10 +479,10 @@ class AdminTeamMembersView(APIView):
             team = Team.objects.get(id=team_id)
         except Team.DoesNotExist:
             return Response({"detail": "Team not found."}, status=404)
-
+        # Ensure Admin is only accessing their own university teams
         if team.university != request.user.university:
             return Response({"detail": "You can only view teams from your university."}, status=403)
-
+        # Get all approved members for the team
         members = TeamMembership.objects.filter(team=team, status="Approve").select_related("user")
 
         data = []
@@ -489,8 +501,7 @@ class AdminTeamMembersView(APIView):
 
         return Response(data)
 
-
-
+# Admin being able to see both home and away player's availability
 class AdminMatchAvailabilityView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -502,7 +513,8 @@ class AdminMatchAvailabilityView(APIView):
             match = Match.objects.get(id=match_id)
         except Match.DoesNotExist:
             return Response({"detail": "Match not found."}, status=404)
-
+        
+        # Confirm match belongs to admin's university
         if match.home_team.university != request.user.university and match.away_team.university != request.user.university:
             return Response({"detail": "Match not in your university."}, status=403)
 
@@ -511,6 +523,7 @@ class AdminMatchAvailabilityView(APIView):
         home_team_data = []
         away_team_data = []
 
+        # Sort players by their team membership
         for a in availability:
             player_data = {
                 "user": f"{a.user.first_name} {a.user.last_name}",
@@ -531,7 +544,7 @@ class AdminMatchAvailabilityView(APIView):
         })
 
 
-
+#--------------------------------
 class AssignPlayerGoalsView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -544,7 +557,7 @@ class AssignPlayerGoalsView(APIView):
         except Match.DoesNotExist:
             return Response({"detail": "Match not found."}, status=404)
 
-        data = request.data  # Expecting list: [{ user_id, team_id, goals }]
+        data = request.data
 
         updated_goals = []
         for entry in data:
@@ -571,30 +584,35 @@ class AssignPlayerGoalsView(APIView):
         serializer = PlayerGoalSerializer(updated_goals, many=True)
         return Response(serializer.data)
 
-
+#-------------------------------------------------------------------------------------------------------------------
+# Allows a user to update their position in a specific team
 class UpdatePlayerPositionView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, team_id):
+        # 1. Get the new position value from the request data
         new_position = request.data.get("position")
         if not new_position:
             return Response({"detail": "Position is required."}, status=400)
 
         try:
+            # Fetch the team membership where user is approved
             membership = TeamMembership.objects.get(user=request.user, team_id=team_id, status="Approve")
         except TeamMembership.DoesNotExist:
             return Response({"detail": "You are not a member of this team."}, status=404)
-
+        #update the user's position
         membership.position = new_position
         membership.save()
 
         return Response({"detail": "Position updated successfully."})
 
-
+#-------------------------------------------------------------------------------------------------------------------
+# Finds the top scorers in the Team
 class TopTeamScorersView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, team_id):
+        #grabs top 5 players based  on total goals 
         top_players = (
             PlayerGoal.objects.filter(team_id=team_id)
             .values("user__first_name", "user__last_name", "user__id")
@@ -614,7 +632,8 @@ class TopTeamScorersView(APIView):
         return Response(data) 
 
     
-
+#-------------------------------------------------------------------------------------------------------------------
+#Finds the top scorers in the Team
 class TopLeagueScorersView(APIView):
     permission_classes = [IsAuthenticated]
 

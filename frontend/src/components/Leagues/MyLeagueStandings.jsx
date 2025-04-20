@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
 import LoadingIndicator from "../LoadingIndicator";
-
+// personalised showing their specific team ranking 
 function MyLeagueStandings({ teamId, leagueId, teamName }) {
   const [standings, setStandings] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
 
+// Helps update the position of the player of that team
+
 function UpdatePosition({ teamId }) {
   const [position, setPosition] = useState("");
   const [saving, setSaving] = useState(false);
@@ -58,7 +60,7 @@ function UpdatePosition({ teamId }) {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+        className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-green-700 transition"
       >
         {saving ? "Saving..." : "Save Position"}
       </button>

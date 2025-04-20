@@ -13,19 +13,16 @@ function PendingRequest() {
 
   // useEffect used to fetch pending join requests
   useEffect(() => {
-    console.log(" useEffect triggered!");
     fetchRequests();
   }, []);
 
   // Function to fetch pending join requests from the backend
   const fetchRequests = async () => {
-    console.log(" fetching api");
     try {
       const res = await api.get("/api/pending-join-requests/");
-      console.log(" response received", res.data);
       setRequests(res.data);
     } catch (error) {
-      console.log(" error fetch", error);
+      console.error("Failed to fetch pending requests", error);
     } finally {
       setLoading(false);
     }

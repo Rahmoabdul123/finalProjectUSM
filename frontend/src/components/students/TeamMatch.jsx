@@ -2,21 +2,24 @@ import { useEffect, useState } from "react";
 import api from "../../api";
 import LoadingIndicator from "../LoadingIndicator";
 
+// Displays a team's matches (upcoming and past), and lets the student set their availability for upcoming matches
+
 function TeamMatch({ teamId }) {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [availabilities, setAvailabilities] = useState({});
-
+  // Fetch matches when teamId changes
   useEffect(() => {
     fetchMatches();
   }, [teamId]);
 
+  // Fetches matches + availability for each match
   const fetchMatches = async () => {
     try {
       const res = await api.get(`/api/teams/${teamId}/matches/`);
       setMatches(res.data);
 
-      // Fetch availability for each match
+      // Fetchs the student's availability for each match
       for (const match of res.data) {
         try {
           const response = await api.get(`/api/matches/${match.id}/availability/`);
@@ -46,7 +49,7 @@ function TeamMatch({ teamId }) {
       await api.post(`/api/matches/${matchId}/availability/`, {
         is_attending: attending,
       });
-      setAvailabilities((prev) => ({ ...prev, [matchId]: attending }));
+      setAvailabilities((prev) => ({ ...prev, [matchId]: attending })); // Update immediately in UI
     } catch (err) {
       console.log("Failed to set availability", err);
     }
@@ -84,9 +87,10 @@ function TeamMatch({ teamId }) {
             </span>
           </div>
         ) : (
+          // If match is upcoming → show attendance buttons
           <>
             <p className="text-sm italic text-blue-600 mb-3">
-              Let your team know if you’re available!
+              Are you available? Let us know! :)
             </p>
 
             <div className="flex flex-wrap gap-3 mb-2">

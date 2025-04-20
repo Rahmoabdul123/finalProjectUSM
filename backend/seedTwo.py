@@ -1,19 +1,11 @@
-from api.models import LeagueTable, Sport
+from api.models import Sport
 
 def run():
-    genders = ["Girls", "Boys"]
-    sports = Sport.objects.all()
+    sports = ["Football", "Hockey", "Basketball"]
 
-    for sport in sports:
-        for gender in genders:
-            league_name = f"{gender}' {sport.name} League"
-            league, created = LeagueTable.objects.get_or_create(
-                name=league_name,
-                sport=sport,
-                gender=gender
-            )
-            if created:
-                print(f" Created league: {league_name}")
-            else:
-                print(f" League already exists: {league_name}")
-
+    for sport_name in sports:
+        sport, created = Sport.objects.get_or_create(name=sport_name)
+        if created:
+            print(f" Created sport: {sport.name}")
+        else:
+            print(f" Already exists: {sport.name}")

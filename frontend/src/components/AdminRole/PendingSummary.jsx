@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
 import { useNavigate } from "react-router-dom";
+import LoadingIndicator from "../LoadingIndicator";
+
+
 
 function PendingSummary() {
   const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -26,7 +30,7 @@ function PendingSummary() {
     fetchRequests();
   }, []);
 
-  if (loading) return null;
+  if (loading) return <LoadingIndicator />;
 
   if (!pendingCount) return null;
 

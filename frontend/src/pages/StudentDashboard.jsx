@@ -6,7 +6,7 @@ import { Smile, Trophy, Users, CalendarDays } from "lucide-react";
 import DirectTeam from "../components/DirectTeam";
 import LeagueFind from "../components/Leagues/LeagueFind";
 import MatchUpcoming from "../components/MatchUpcoming";
-
+// Main Student dashboard containing quick access to teams and Leagues as well as Upcoming Matches
 function StudentDashboard() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
@@ -18,7 +18,7 @@ function StudentDashboard() {
           Your True University Experience Starts here 🏅
         </h1>
         <p className="text-gray-600 text-lg">
-          join Team! Have Fun! Make Memories!
+           Have Fun! Make unforgettable Memories!
         </p>
       </div>
 

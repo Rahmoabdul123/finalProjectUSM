@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 import StudentHeader from "../components/studentHeader";
 import { getSportLogo } from "../components/SportsLogoIcon";
+import Footer from "../components/Footer";
 
+// Page where it shows the teams that the user was approved to join by the admin
 function MyTeams() {
   const [teams, setTeams] = useState([]);
   const navigate = useNavigate();
@@ -21,9 +23,10 @@ function MyTeams() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <StudentHeader />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+      <div className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">My Teams</h1>
 
         {teams.length === 0 ? (
@@ -58,6 +61,7 @@ function MyTeams() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }

@@ -4,10 +4,8 @@ import LoadingIndicator from "../LoadingIndicator";
 import StudentHeader from "../studentHeader";
 import AdminNavi from "../AdminNavi";
 
-/**
- * Displays the league standings table for a given league.
- * - leagueId: ID of the league to fetch standings for
- */
+// Displays the league standings table for a given league.
+
 function LeagueStandings({ leagueId }) {
   const [standings, setStandings] = useState([]);
   const [loading, setLoading] = useState(true);
