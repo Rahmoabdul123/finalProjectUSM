@@ -1,6 +1,7 @@
-from api.models import University
+from api.models import University, Sport
 
 def run():
+    # Step 1: Seed Universities
     universities = [
         {"name": "University of Yellow", "location": "Sunrise City"},
         {"name": "University of Magenta", "location": "Roseville"},
@@ -14,6 +15,18 @@ def run():
             defaults={"location": uni["location"]}
         )
         if created:
-            print(f"Created: {obj.name} ")
+            print(f"Created University: {obj.name}")
         else:
-            print(f"Already exists: {obj.name}")
+            print(f"University already exists: {obj.name}")
+
+    # Step 2: Seed Sports
+    sports = ["Football", "Hockey", "Basketball"]
+
+    for sport_name in sports:
+        sport, created = Sport.objects.get_or_create(name=sport_name)
+        if created:
+            print(f"Created Sport: {sport.name}")
+        else:
+            print(f"Sport already exists: {sport.name}")
+
+    print(" Universities and Sports seeded successfully.")

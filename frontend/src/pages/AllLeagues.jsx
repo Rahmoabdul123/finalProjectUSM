@@ -4,6 +4,11 @@ import StudentHeader from "../components/studentHeader";
 import AdminNavi from "../components/AdminNavi";
 import Footer from "../components/Footer";
 
+/**
+*The page that diplays all of the leagues
+* Added the right nav bar depending on the user
+*/
+
 function AllLeagues() {
   const role = localStorage.getItem("role");
 

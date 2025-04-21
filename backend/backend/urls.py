@@ -16,8 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView, ListUniversitiesView, CustomTokenObtainPairView, UserDashboardView,ChangePasswordView,UserProfileDetailView
+from api.views import CreateUserView, ListUniversitiesView, CustomTokenObtainPairView,ChangePasswordView,UserProfileDetailView
 from rest_framework_simplejwt.views import TokenRefreshView
+# Code reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team], [https://www.youtube.com/watch?v=c-QsfbznSXI]
+#  The reused lines are Line 26,27,29,32,33
+#  Accessed: [date you watched it]
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -25,7 +28,6 @@ urlpatterns = [
     path("api/token/", CustomTokenObtainPairView.as_view(), name="get_token"),  
     path("api/token/refresh/", TokenRefreshView.as_view(), name="refresh"),
     path("api/universities/", ListUniversitiesView.as_view(), name="list-universities"),
-    path("dashboard/", UserDashboardView.as_view(), name="user-dashboard"),
     path("api-auth/", include("rest_framework.urls")),
     path("api/", include("api.urls")),
     path("api/change-password/",ChangePasswordView.as_view(), name="change-password"),

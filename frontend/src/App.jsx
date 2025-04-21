@@ -10,7 +10,7 @@ import FindTeam from "./pages/FindTeam";
 import PendingRequest from "./pages/PendingRequest"
 import TeamHomepage from "./pages/TeamHomepage"
 import MyTeams from "./pages/MyTeams"
-import LeagueStandingsWrapper from "./pages/LeagueStandingsWrapper";
+import LeagueStandings from "./components/Leagues/LeagueStandings";
 import AdminUniTeam from "./pages/AdminUniTeam";
 import AdminTeamFixtures from "./pages/AdminTeamFixtures";
 import AdminTeamMembers from "./pages/AdminTeamMembers";
@@ -19,7 +19,11 @@ import AdminTeamDetails from "./pages/AdminTeamDetails";
 import ProfileSetting from "./pages/ProfileSetting";
 import AllLeagues from "./pages/AllLeagues"
 import RedirectRole from "./components/RedirectRoles";
-
+import { Toaster } from 'react-hot-toast';
+//  Code inspired and reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], 
+// Author :[Tech with Team]
+// , [https://www.youtube.com/watch?v=c-QsfbznSXI]
+//   I've followed the protectedRoute logic but I have reused Line 28 to 36 
 
 function Logout() {
   localStorage.clear()
@@ -35,16 +39,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Default Protected Home Route 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        */}
 
         {/*  Admin Dashboard (Only for Admins) */}
         <Route
@@ -119,14 +113,11 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* <Route path="/search-league" element={<LeagueFind />} /> */}
-        {/* <Route path="/leagues/:leagueId/standings" element={<LeagueStandingsWrapper />} /> */}
-
         <Route
           path="/leagues/:leagueId/standings"
           element={
             <ProtectedRoute >
-              <LeagueStandingsWrapper />
+              <LeagueStandings />
             </ProtectedRoute>
           }
         />

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import api from "../../api";
 import LoadingIndicator from "../LoadingIndicator";
 import StudentHeader from "../studentHeader";
@@ -6,10 +7,13 @@ import AdminNavi from "../AdminNavi";
 
 // Displays the league standings table for a given league.
 
-function LeagueStandings({ leagueId }) {
+function LeagueStandings() {
+  const { leagueId } = useParams();
+
   const [standings, setStandings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState("");
+  
 
   useEffect(() => {
     setRole(localStorage.getItem("role") || "");

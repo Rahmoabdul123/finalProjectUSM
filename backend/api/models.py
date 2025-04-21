@@ -2,7 +2,9 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.conf import settings
 
-
+# Code inspired from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team], [https://www.youtube.com/watch?v=c-QsfbznSXI]
+#  The models for User Model has been inspired by the video however I used custom 
+#  Accessed: [09/03/2025]
 # ----------------------------------------------------------------------------------------------------------
 # I want users to register using email instead of username so using UniveristyUser-> a custom user manager.
 class UniversityUser(BaseUserManager):
@@ -41,7 +43,6 @@ class UniversityUser(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-# ----------------------------------------------------------------------------------------------------------
 #my University table in the database that shows names and location
 class University(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -50,7 +51,7 @@ class University(models.Model):
     def __str__(self):
         return self.name
     
-# ----------------------------------------------------------------------------------------------------------
+
 # Custom user model without username field
 class User(AbstractUser):
     username = None  # No username
@@ -74,8 +75,6 @@ class User(AbstractUser):
         return f"{self.first_name} {self.last_name} ({self.role} - {self.university.name})"
 
 
-
-# ----------------------------------------------------------------------------------------------------------
 #represents the types of sports
 class Sport(models.Model):
     name = models.CharField(max_length=100)
@@ -84,7 +83,6 @@ class Sport(models.Model):
         return self.name
 
 
-# ----------------------------------------------------------------------------------------------------------
 #League Table for each sport and gender
 class LeagueTable(models.Model):
     name = models.CharField(max_length=255, unique=True) 
@@ -100,7 +98,7 @@ class LeagueTable(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-# ----------------------------------------------------------------------------------------------------------
+
 #My Teams database table
 class Team(models.Model):
     name = models.CharField(max_length=100)
@@ -117,7 +115,7 @@ class Team(models.Model):
         return f"{self.name} - {self.sport.name} ({self.university.name})"
 
 
-# ----------------------------------------------------------------------------------------------------------
+
 #My TeamMembership
 
 class TeamMembership(models.Model): #Approval status
@@ -143,7 +141,7 @@ class Meta:
 
 
     
-# ----------------------------------------------------------------------------------------------------------
+
 # Match between two teams in a league
 class Match(models.Model):
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name='home_matches')
@@ -172,7 +170,7 @@ class Match(models.Model):
 
 
     
-# ----------------------------------------------------------------------------------------------------------
+
 # Player availability for a match
 class MatchAvailability(models.Model):
     match = models.ForeignKey('Match', on_delete=models.CASCADE, related_name='availabilities')

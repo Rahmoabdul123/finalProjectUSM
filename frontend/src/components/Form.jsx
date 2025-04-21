@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 //import "../styles/Form.css";
 import '../styles/tailwind.css';
+import { Toaster, toast } from 'react-hot-toast';
 
 import LoadingIndicator from "./LoadingIndicator";
 import { Link } from "react-router-dom";
@@ -63,8 +64,20 @@ function Form({ route, method }) {
             } else {
                 navigate("/login");
             }
-        } catch (error) {
-            alert("Something went wrong. Please try again.");
+          } catch (error) {
+            if (error.response) {
+                const data = error.response.data;
+    
+                if (data.detail) {
+                    toast.error(data.detail);
+                } else if (data.email) {
+                    toast.error(data.email[0]);
+                } else {
+                    toast.error("Something went wrong. Please check your input and try again.");
+                }
+            } else {
+                toast.error("Something went wrong. Please try again.");
+            }
             console.log(error);
         } finally {
             setLoading(false);
@@ -73,6 +86,12 @@ function Form({ route, method }) {
 
     return (
       <div className="flex h-screen">
+        <>
+          <Toaster position="top-center" reverseOrder={false} />  
+          <div className="flex h-screen">
+            {/* your form content */}
+          </div>
+        </>
         {/* Left side - Form */}
         <div className="flex flex-1 justify-center items-center bg-white">
           <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg px-12 py-10 w-full max-w-md">

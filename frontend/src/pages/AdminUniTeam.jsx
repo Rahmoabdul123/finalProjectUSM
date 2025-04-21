@@ -1,7 +1,11 @@
 import { useEffect } from "react";
 import AdminNavi from "../components/AdminNavi";
 import AdminTeams from "../components/AdminRole/AdminTeams";
-// This is when you click on view my university teams on NAV
+
+/**
+*This is a separate page accessed through the nav to find all of the teams 
+* 
+*/
 function AdminUniTeam() {
   useEffect(() => {
     console.log("AdminDashboard loaded");

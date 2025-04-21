@@ -6,10 +6,14 @@ import LoadingIndicator from "../components/LoadingIndicator";
 import { getSportLogo } from "../components/SportsLogoIcon";
 import Footer from "../components/Footer";
 
+/**
+*allows teams to find their team from their university and request to join the team
+*/
+
 function FindTeam() {
-  const [teams, setTeams] = useState([]);
-  const [sports, setSports] = useState([]);
-  const [selectedSport, setSelectedSport] = useState("");
+  const [teams, setTeams] = useState([]); // List of teams
+  const [sports, setSports] = useState([]); // List of sports (for filtering)
+  const [selectedSport, setSelectedSport] = useState(""); // Track selected sport for filtering
 
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -21,6 +25,7 @@ function FindTeam() {
     fetchSports();
   }, [selectedSport]);
 
+  // Fetch list of teams at the student's university filtered by sport
   const fetchTeams = async () => {
     try {
       const response = await api.get("/api/teams-by-university/", {
@@ -34,6 +39,8 @@ function FindTeam() {
     }
   };
 
+  // Fetch list of all available sports for the dropdown filter
+
   const fetchSports = async () => {
     try {
       const response = await api.get("/api/sports/");
@@ -43,6 +50,7 @@ function FindTeam() {
     }
   };
 
+  // this is when a student clicks "Request to Join" a team
   const handleJoinRequest = async (teamId) => {
     try {
       const response = await api.post(`/api/teams/${teamId}/join/`);
@@ -64,7 +72,7 @@ function FindTeam() {
           Teams at Your University
         </h1>
 
-        {/* Filter Dropdown */}
+        {/*  Sport Filter Dropdown */}
         <div className="mb-6">
           <label htmlFor="sportFilter" className="sr-only">Filter by sport</label>
           <select
@@ -102,12 +110,13 @@ function FindTeam() {
                     {team.name}
                   </h2>
                 </div>
-
+                {/* Team Details */}
                 <div className="text-sm text-gray-600 space-y-1 mb-4">
                   <p><span className="font-medium">Sport:</span> {team.sport?.name || "N/A"}</p>
                   <p><span className="font-medium">University:</span> {team.university?.name || "N/A"}</p>
                 </div>
 
+                {/* Join */}
                 <button
                   onClick={() => handleJoinRequest(team.id)}
                   className="mt-auto bg-blue-900 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition transform hover:scale-105 duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"

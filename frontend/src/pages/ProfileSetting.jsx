@@ -6,6 +6,11 @@ import StudentHeader from "../components/studentHeader";
 import AdminNavi from "../components/AdminNavi";
 import Footer from "../components/Footer";
 
+/**
+ * Displays Profile setting.
+ * has two tabs 
+ */
+
 function ProfileSetting() {
   const [activeTab, setActiveTab] = useState("details");
   const [firstName, setFirstName] = useState("");

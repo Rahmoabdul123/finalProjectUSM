@@ -9,7 +9,10 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+# Code adapted from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team], [https://www.youtube.com/watch?v=c-QsfbznSXI]
+#  The reused lines I've specified below -> REUSED CODE..
 
+# REUSED CODE Line 17 to 23 
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
@@ -29,7 +32,7 @@ SECRET_KEY = 'django-insecure-3ql9_kk20dt@s*!u&egq0u!*z8l!7+)z=fb-#m%ia&^cc_@$=q
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+# REUSED CODE Line 37 to 51
 ALLOWED_HOSTS = ["*"]
 
 REST_FRAMEWORK = {
@@ -46,7 +49,7 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
-
+# REUSED CODE Line 63 to 65
 # Application definition
 
 INSTALLED_APPS = [
@@ -60,7 +63,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
 ]
-
+# REUSED CODE Line 78
 AUTH_USER_MODEL = "api.User"
 
 MIDDLEWARE = [
@@ -164,6 +167,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+# REUSED CODE Line 172-173
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True

@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api";
+import LoadingIndicator from "../components/LoadingIndicator"; 
+import { UserRound, Goal } from "lucide-react"; 
 
-//** Admin view: Displays a list of all players in a specific team.
+/**
+*Admin-side: Shows all of the team members and their position and goals
+*/
+
 function AdminTeamMembers() {
-  const { teamId } = useParams();         
-  const [members, setMembers] = useState([]);// Store fetched team members
+  const { teamId } = useParams();
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch team members on component mount or when teamId changes
+
+  // Fetches team members when the page loads
   useEffect(() => {
     const fetchMembers = async () => {
       try {
@@ -15,43 +22,59 @@ function AdminTeamMembers() {
         setMembers(res.data);
       } catch (err) {
         console.log("Failed to fetch team members", err);
-        // TODO: Optional: Show user-friendly error message
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchMembers();
   }, [teamId]);
 
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Team Members</h1>
+  if (loading) return <LoadingIndicator />;
 
-        {/* Fallback message if no members are found */}
-        {members.length === 0 ? (
-          <p className="text-gray-600 italic">No members found for this team.</p>
-        ) : (
-          <div className="space-y-4">
-            {members.map((member) => (
-              <div
-                key={member.id}
-                className="bg-white shadow p-4 rounded"
-              >
-                <p className="font-semibold">{member.name}</p>
-                <p className="text-sm text-gray-700">
-                  Position: {member.position || "N/A"}
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Team Members- Approved Members will be here:</h2>
+
+      {/* Members Grid */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2">
+        {members.map((member) => (
+          <div
+            key={member.id}
+            className="bg-white p-5 rounded-lg shadow hover:shadow-md transition duration-200 border border-gray-200"
+          >
+            {/* Card layout */}
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xl font-semibold text-gray-800">
+                  {member.name}
                 </p>
-                <p className="text-sm text-gray-700">
-                  Goals Scored: {member.goals_scored}
+                <p className="text-xl text-gray-600 mt-1">
+                  <UserRound className="inline-block w-4 h-4 mr-1 text-blue-500" />
+                  Position:{" "}
+                  <span className="font-medium">
+                    {member.position || "Not set"} {/* shows "Not set" if nothing inputted*/}
+                  </span>
                 </p>
               </div>
-            ))}
+              {/* Right section: Goals scored */}
+              <div className="text-right">
+                <p className="text-xl text-gray-600">
+                  <Goal className="inline-block w-6 h-6 mr-2 text-green-600" />
+                  Goals:{" "}
+                  <span className="font-bold text-green-700">
+                    {member.goals_scored}
+                  </span>
+                </p>
+              </div>
+            </div>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );
 }
 
 export default AdminTeamMembers;
+
 

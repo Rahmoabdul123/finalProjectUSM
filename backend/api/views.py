@@ -13,6 +13,7 @@ from django.db.models import Q
 from django.db.models import Sum
 
 
+
 User = get_user_model()
 
 # Custom token view
@@ -21,22 +22,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 
-# Dashboard route that returns a different message for Admins and Students
-class UserDashboardView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, *args, **kwargs):
-        user = request.user
-
-        if hasattr(user, "role"):
-            if user.role == "Admin":
-                return Response({"message": "Welcome, Admin!", "dashboard": "/admin-dashboard"})
-            else:
-                return Response({"message": "Welcome, Student!", "dashboard": "/student-dashboard"})
-        else:
-            return Response({"message": "User role not found."}, status=400)
-
-
+# Code adapted from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team], [https://www.youtube.com/watch?v=c-QsfbznSXI]
+#  I've used Line 46 to 49
+#  Accessed: [09/03/2025]
 # Endpoint to allow user registration (sign-up)
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -155,12 +143,13 @@ class HandleJoinRequestView(APIView):
         return Response({"detail": "Request rejected."})
     
 
-# Admin action to approve or reject a join request
+# FOR BOTH : TO CHANGE PASSWORDS
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data, context={"request": request})
+        # If data is valid (new passwords is strong and old password is correct)
         if serializer.is_valid():
             user = request.user
             user.set_password(serializer.validated_data["new_password"])
@@ -177,14 +166,14 @@ class UserProfileDetailView(APIView):
         serializer = UserProfileDetailSerializer(
             request.user, data=request.data, partial=True, context={"request": request}
         )
+        # Validate the incoming data
         if serializer.is_valid():
             serializer.save()
-            return Response({"detail": "User details updated successfully."})
+            return Response({"detail": "User details updated successfully. Please reload the page"})
         return Response(serializer.errors, status=400)
 
 
 #this would list out the teams that the user is in
-
 class MyTeamsView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -197,7 +186,6 @@ class MyTeamsView(APIView):
     
 
 # View to return all approved members of a specific team and shows goals and position
-
 
 class TeamMembersView(APIView):
     permission_classes = [IsAuthenticated]
@@ -237,7 +225,7 @@ class TeamMembersView(APIView):
         return Response(serializer.data)
 
 
-#showing upcoming matches across all sports the user is in
+# showing upcoming matches across all sports the user is in
 class MyMatchesView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -501,6 +489,7 @@ class AdminTeamMembersView(APIView):
 
         return Response(data)
 
+
 # Admin being able to see both home and away player's availability
 class AdminMatchAvailabilityView(APIView):
     permission_classes = [IsAuthenticated]
@@ -544,7 +533,7 @@ class AdminMatchAvailabilityView(APIView):
         })
 
 
-#--------------------------------
+
 class AssignPlayerGoalsView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -584,7 +573,7 @@ class AssignPlayerGoalsView(APIView):
         serializer = PlayerGoalSerializer(updated_goals, many=True)
         return Response(serializer.data)
 
-#-------------------------------------------------------------------------------------------------------------------
+
 # Allows a user to update their position in a specific team
 class UpdatePlayerPositionView(APIView):
     permission_classes = [IsAuthenticated]

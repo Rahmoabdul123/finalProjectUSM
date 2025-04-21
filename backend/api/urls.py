@@ -1,6 +1,11 @@
 from django.urls import path
 from . import views
 
+# Code reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More],
+# Author [Tech with Team], 
+# Link of the video:[https://www.youtube.com/watch?v=c-QsfbznSXI]
+#  The layout of the urls was inspired from the video as he used views. in the url 
+
 urlpatterns = [
     # FOR STUDENTS = Getting all teams belong to the user's uni
     path("teams-by-university/", views.TeamsByUniversityView.as_view()),

@@ -9,7 +9,7 @@ import TopScorers from "../components/students/TopScorers";
 import Footer from "../components/Footer";
 /**
  * Displays a homepage for a selected team.
- * Includes navigation to view team members, match schedule, and league standings.
+ * has a vertical navigation containing different tabs to find team Members,matches,leagues and top scoreres
  */
 function TeamHomepage() {
   const { state } = useLocation();
@@ -96,7 +96,7 @@ function TeamHomepage() {
 
           <img
             src="/images/logoFinal-removed-bg.png"
-            alt="University Logo"
+            alt="USM Logo"
             className="h-20 mb-6"
           />
 
@@ -104,6 +104,7 @@ function TeamHomepage() {
             You are now a member of the {team.sport.name} team at{" "}
             {team.university.name}.
           </p>
+          {/* Dynamically Render Sections */}
           {section === "matches" && <TeamMatch teamId={team.id} />}
           {section === "league" && (
             <MyLeagueStandings

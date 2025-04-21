@@ -3,8 +3,13 @@ import api from "../api";
 import AdminHeader from "../components/AdminNavi";
 import { useNavigate } from "react-router-dom";
 
+
+/**
+*This displays the pending requests made by students from their university 
+*  
+*/
+
 function PendingRequest() {
-  console.log(" PendingRequest loaded");
   // handles the list of join requests
   const [requests, setRequests] = useState([]);
   // handles loading spinner/feedback
