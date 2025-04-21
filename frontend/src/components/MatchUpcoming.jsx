@@ -3,6 +3,11 @@ import api from "../api";
 import LoadingIndicator from "./LoadingIndicator";
 import { Home, Users , Clock} from "lucide-react"; // Using icons from lucide-react
 
+//  Code Inspired by Tailwind CSS v4 Full Course 2025 | Master Tailwind in One Hour, 
+// Author :JavaScript Mastery
+// , [https://www.youtube.com/watch?v=6biMWgD6_JY]
+// This helped me with creating the tailwind on this page
+
 // Shows the next upcoming match (Used in the student dashboard)
 function MatchUpcoming() {
   const [match, setMatch] = useState(null);

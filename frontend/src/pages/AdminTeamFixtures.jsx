@@ -4,6 +4,8 @@ import api from "../api";
 import EditScore from "../components/AdminRole/EditScore";
 import AdminAssignGoals from "../components/AdminRole/AdminAssignGoals";
 
+// Displays the match fixtures to the user
+
 function AdminTeamFixtures() {
   const { teamId } = useParams();
   const navigate = useNavigate();
@@ -11,6 +13,7 @@ function AdminTeamFixtures() {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [showAssignGoals, setShowAssignGoals] = useState(false);
 
+  //Fetches all of the matches of that team
   const fetchTeamMatches = async () => {
     try {
       const res = await api.get(`/api/teams/${teamId}/matches/`);

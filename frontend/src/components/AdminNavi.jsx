@@ -1,6 +1,16 @@
 import { Link } from "react-router-dom";
 import '../styles/tailwind.css';
 
+//  Code Inspired by Tailwind CSS v4 Full Course 2025 | Master Tailwind in One Hour, 
+// Author :JavaScript Mastery
+// , [https://www.youtube.com/watch?v=6biMWgD6_JY]
+// This helped me with creating the tailwind on this page
+
+//Tailwind used from https://www.creative-tim.com/twcomponents/cheatsheet
+ // Author :Creative Tim
+ //This also helped with creating the tailwind 
+// This helped me with creating the tailwind on this page
+
 function AdminNavi() {
   return (
     <nav className="bg-blue-900 text-white px-6 py-4 shadow-md">

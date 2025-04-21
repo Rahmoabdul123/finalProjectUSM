@@ -9,6 +9,16 @@ import { Toaster, toast } from 'react-hot-toast';
 import LoadingIndicator from "./LoadingIndicator";
 import { Link } from "react-router-dom";
 
+//  Code inspired and reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], 
+// Author :[Tech with Team]
+// , [https://www.youtube.com/watch?v=c-QsfbznSXI]
+// I adapted from the video to create the login page
+
+//  Code Inspired by Tailwind CSS v4 Full Course 2025 | Master Tailwind in One Hour, 
+// Author :JavaScript Mastery
+// , [https://www.youtube.com/watch?v=6biMWgD6_JY]
+// This helped me with creating the tailwind on this page
+
 function Form({ route, method }) {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -174,6 +184,7 @@ function Form({ route, method }) {
         {/* Right side - Image */}
         <div className="flex flex-1 items-center justify-center bg-gray-100">
           <img src="/images/hockeyUSM.jpg" alt="Hockey" className="w-full h-full object-cover" />
+          {/* Image Source: https://www.pexels.com/search/hockey/ */}
         </div>
       </div>
       

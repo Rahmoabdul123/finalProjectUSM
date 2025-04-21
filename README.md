@@ -203,23 +203,113 @@ There are 4 universities in total, therefore once you create the first account f
 
  The univerisity admins can only do certain actions (e.g. accepting/rejecting requests and more ) to ONLY students from that same university. Please make a note of accounts made from that same university. 
 
-#### Student Features
--  Request to join a team (admin from that university needs to accept)
-- See their teammates (take into account by creating another account)
-- Update their position 
-- Choose their availability for a match
-- See their personal team ranking in the league
-- See the top 5 scorers (both league and their team)
-- Change their email, first name and password
-#### Admins Features
-- accepts/rejects team request
-- Can see all team members of each of the team
-- update scores and dates for a match (affects team ranking)
-- can assign goals to the players
-- can see who's available for each match
-- Change their email, first name and password
-- Can see all of the leagues and their rankings
+## You do need to go back and forth between the admin account and student account to see the changes 
 
+
+/backend
+├──pycache
+├── /api
+│   ├──pycache
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── urls.py
+│   ├── views.py
+│   └── /migrations
+│       └── __init__.py
+├── /backend
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── db.sqlite3
+├── manage.py
+├── SeedOne.py
+├── SeedTwo.py
+├── SeedThree.py
+├── SeedFour.py
+└── SeedFive.py
+├──env
+/frontend
+├── /node_modules
+├── /public
+│   ├──images
+│   ├──│   ├──Admin
+│   ├──│   ├──Basketball-remove
+│   ├──│   ├──Football
+│   ├──│   ├──Hockeyremovebg
+│   ├──│   ├──hockeyUSM
+│   ├──│   ├──logoFinal-removed
+│   ├──│   ├──logoFinal.png
+│   ├──│   ├──logoFinalBlack-remove.png
+│   ├──│   ├──logoFinalBlack.png
+│   ├──│   ├──TeamsPic.png
+│   ├──│   ├──Trophy.png
+│   ├──│   ├──USMLogo.png
+├── /src
+│   ├── /assets
+│   ├── /components
+│   │   ├── /AdminRole
+│   │   │   ├── AdminAssignGoals.jsx
+│   │   │   ├── AdminTeams.jsx
+│   │   │   ├── EditScore.jsx
+│   │   │   └── PendingSummary.jsx
+│   │   ├── /Leagues
+│   │   │   ├── LeagueFind.jsx
+│   │   │   ├── LeagueStandings.jsx
+│   │   │   └── MyLeagueStandings.jsx
+│   │   ├── /Profile
+│   │   │   ├── ProfileDetail.jsx
+│   │   │   └── ProfilePassword.jsx
+│   │   ├── /students
+│   │   │   ├── TeamMatch.jsx
+│   │   │   ├── TeamMates.jsx
+│   │   │   ├── TopScorers.jsx
+│   │   │   └── UpdatePosition.jsx
+│   │   ├── AdminNavi.jsx
+│   │   ├── DirectTeam.jsx
+│   │   ├── Footer.jsx
+│   │   ├── Form.jsx
+│   │   ├── LoadingIndicator.jsx
+│   │   ├── MatchUpcoming.jsx
+│   │   ├── ProtectedRoute.jsx
+│   │   ├── RedirectRoles.jsx
+│   │   ├── SportsLogoIcon.jsx
+│   │   └── studentHeader.jsx
+│   ├── /pages
+│   │   ├── AdminDashboard.jsx
+│   │   ├── AdminMatchAvailability.jsx
+│   │   ├── AdminTeamDetails.jsx
+│   │   ├── AdminTeamFixtures.jsx
+│   │   ├── AdminTeamMembers.jsx
+│   │   ├── AdminUniTeam.jsx
+│   │   ├── AllLeagues.jsx
+│   │   ├── FindTeam.jsx
+│   │   ├── Login.jsx
+│   │   ├── MyTeams.jsx
+│   │   ├── NotFound.jsx
+│   │   ├── PendingRequest.jsx
+│   │   ├── ProfileSetting.jsx
+│   │   ├── Register.jsx
+│   │   ├── StudentDashboard.jsx
+│   │   └── TeamHomepage.jsx
+│   ├── api.js
+│   ├── App.jsx
+│   ├── constants.js
+│   └── main.jsx
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package.json
+├── package-lock.json
+├── vite.config.js
+└── README.md
+
+requirements.txt (root)
+config.ini (root)
 
 
 

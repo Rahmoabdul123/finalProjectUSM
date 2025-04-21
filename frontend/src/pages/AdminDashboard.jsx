@@ -6,7 +6,15 @@ import LeagueFind from   "../components/Leagues/LeagueFind";
 import { Users } from "lucide-react";
 import Footer from "../components/Footer";
 
- 
+//  Code Inspired by Tailwind CSS v4 Full Course 2025 | Master Tailwind in One Hour, 
+// Author :JavaScript Mastery
+// , [https://www.youtube.com/watch?v=6biMWgD6_JY]
+// This helped me with creating the tailwind on this page
+
+//Tailwind used from https://www.creative-tim.com/twcomponents/cheatsheet
+ // Author :Creative Tim
+ //This also helped with creating the tailwind 
+
 // Main dashboard page for Admin users to view pending requests, manage teams, and explore leagues.
 
 function AdminDashboard() {
