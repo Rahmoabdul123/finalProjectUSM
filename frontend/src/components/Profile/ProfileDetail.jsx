@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import api from "../../api";
 
+//Profile
+
 function ProfileDetail() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");

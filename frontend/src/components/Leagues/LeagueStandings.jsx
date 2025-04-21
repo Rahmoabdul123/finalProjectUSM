@@ -6,6 +6,7 @@ import StudentHeader from "../studentHeader";
 import AdminNavi from "../AdminNavi";
 
 // Displays the league standings table for a given league.
+// Dynamically shows Admin or Student navigation depending on the user's role
 
 function LeagueStandings() {
   const { leagueId } = useParams();
@@ -35,6 +36,7 @@ function LeagueStandings() {
 
   return (
     <>
+    {/* Navigation bar: Admin or Student depending on the user role */}
       {role === "Admin" ? <AdminNavi /> : <StudentHeader />}
       <div className="overflow-x-auto bg-white shadow-lg rounded-2xl p-8">
         <h2 className="text-4xl font-extrabold text-blue-900 mb-8 flex items-center gap-3">

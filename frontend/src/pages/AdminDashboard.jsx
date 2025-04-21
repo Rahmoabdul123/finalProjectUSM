@@ -11,7 +11,7 @@ import Footer from "../components/Footer";
 // , [https://www.youtube.com/watch?v=6biMWgD6_JY]
 // This helped me with creating the tailwind on this page
 
-//Tailwind used from https://www.creative-tim.com/twcomponents/cheatsheet
+//Tailwind inspired from https://www.creative-tim.com/twcomponents/cheatsheet
  // Author :Creative Tim
  //This also helped with creating the tailwind 
 

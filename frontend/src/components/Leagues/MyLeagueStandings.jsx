@@ -22,6 +22,7 @@ function MyLeagueStandings({ teamId, leagueId, teamName }) {
   }, [leagueId]);
 
   if (loading) return <LoadingIndicator />;
+   // Find the index of the user's team in the standings
 
   const yourTeamIndex = standings.findIndex((team) => team.team_name === teamName);
 
@@ -29,6 +30,7 @@ function MyLeagueStandings({ teamId, leagueId, teamName }) {
     <div className="overflow-x-auto bg-white shadow-xl rounded-xl p-6">
       <h2 className="text-3xl font-bold mb-4 text-gray-800">📊 Your League Standings</h2>
 
+      {/* Display the user's team ranking if found */}
       {yourTeamIndex !== -1 && (
         <p className="text-lg font-medium text-blue-700 mb-4">
           Your team is currently ranked{" "}
@@ -36,6 +38,7 @@ function MyLeagueStandings({ teamId, leagueId, teamName }) {
         </p>
       )}
 
+      {/* Table of all teams in the league */}
       <div className="overflow-auto">
         <table className="min-w-full border text-base text-center">
           <thead className="bg-blue-100 text-blue-900 uppercase tracking-wider">
@@ -51,6 +54,7 @@ function MyLeagueStandings({ teamId, leagueId, teamName }) {
               <th className="py-3 px-4">Points</th>
             </tr>
           </thead>
+          {/* Loop through each team and display their stats */}
           <tbody className="bg-white divide-y divide-gray-200">
             {standings.map((team, index) => {
               const isCurrent = team.team_name === teamName;

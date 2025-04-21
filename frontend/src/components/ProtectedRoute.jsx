@@ -4,6 +4,12 @@ import api from "../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
 import { useState, useEffect } from "react";
 
+/**
+*Code reused until line 56 from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team]
+*[https://www.youtube.com/watch?v=c-QsfbznSXI]
+*  Accessed: [09/03/2025]
+*/
+
 function ProtectedRoute({ children, requiredRole }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
     const location = useLocation();

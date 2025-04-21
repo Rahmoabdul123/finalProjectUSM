@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import api from "../../api";
 
+//Changing password
+
 function ProfilePassword() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
