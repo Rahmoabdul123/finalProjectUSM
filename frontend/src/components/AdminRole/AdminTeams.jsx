@@ -3,6 +3,10 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import { getSportLogo } from "../SportsLogoIcon";
 
+/**
+ * Admin view: Allows admin to see every team from their university only
+ */
+
 function AdminTeams() {
   const [teams, setTeams] = useState([]);
   const navigate = useNavigate();

@@ -4,6 +4,10 @@ import AdminNavi from "../components/AdminNavi";
 import AdminTeamMembers from "./AdminTeamMembers";
 import AdminTeamFixtures from "./AdminTeamFixtures";
 
+/**
+ * Admin view:Main page with two tabs navigating to either the members tab or fixtures tab
+ */
+
 function AdminTeamDetails() {
   const { teamId } = useParams();
   const [activeTab, setActiveTab] = useState("members"); // "members" or "fixtures"

@@ -89,7 +89,7 @@ function Form({ route, method }) {
         <>
           <Toaster position="top-center" reverseOrder={false} />  
           <div className="flex h-screen">
-            {/* your form content */}
+            {/*  form content */}
           </div>
         </>
         {/* Left side - Form */}
@@ -136,6 +136,7 @@ function Form({ route, method }) {
               placeholder="Password"
               required
             />
+            <h3 className="text-1xl  text-center mb-4">Passwords require at least 8 characters,one Uppercase and one number </h3>
   
             {method === "register" && (
               <select
@@ -172,7 +173,7 @@ function Form({ route, method }) {
   
         {/* Right side - Image */}
         <div className="flex flex-1 items-center justify-center bg-gray-100">
-          <img src="/images/hockeyGirl.png" alt="Hockey" className="w-full h-full object-cover" />
+          <img src="/images/hockeyUSM.jpg" alt="Hockey" className="w-full h-full object-cover" />
         </div>
       </div>
       

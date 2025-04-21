@@ -1,6 +1,10 @@
 import { useState } from "react";
 import api from "../../api";
 
+
+/**
+ * Admin view: Allows admin to edit the score
+ */
 function EditScore({ match, onClose }) {
   const [homeScore, setHomeScore] = useState(match.home_score ?? "");
   const [awayScore, setAwayScore] = useState(match.away_score ?? "");

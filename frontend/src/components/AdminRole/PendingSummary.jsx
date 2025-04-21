@@ -3,7 +3,9 @@ import api from "../../api";
 import { useNavigate } from "react-router-dom";
 import LoadingIndicator from "../LoadingIndicator";
 
-
+/**
+ * A yellow notification showing the number of people who have requested to join a team
+ */
 
 function PendingSummary() {
   const [pendingCount, setPendingCount] = useState(0);

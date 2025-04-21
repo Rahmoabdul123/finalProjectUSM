@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
 
+/**
+ * Page that allows admin to assign goals
+ */
+
 function AdminAssignGoals({ matchId, teamId, onClose }) {
   const [players, setPlayers] = useState([]);
   const [goals, setGoals] = useState({});
