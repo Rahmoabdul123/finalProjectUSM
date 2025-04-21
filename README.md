@@ -1,5 +1,8 @@
 # FinalProjectUSM
 
+USM is a sports management platform that allows university to be able to manage sports activities. There are two role:
+- Students are able to request and join teams etc and admins are responsible for managing sports teams at the university. 
+The web app ensure better seamless experience for both students and admins making sports management and participants much more easier
 
 ### Installing the Backend
 ---------------------------
