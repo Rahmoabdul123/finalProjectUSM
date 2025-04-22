@@ -98,6 +98,11 @@ if it's currently still on frontend, please go back a directory by entering:
     cd ../
     cd backend
 
+1) python manage.py makemigrations
+
+2) python manage.py migrate
+
+Making sure Staying in the backend directory
 ##### entering the database in the terminal
 Please entire this in the terminal:
 

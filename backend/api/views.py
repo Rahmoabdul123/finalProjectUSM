@@ -23,7 +23,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 # Code adapted from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team], [https://www.youtube.com/watch?v=c-QsfbznSXI]
-#  I've used Line 46 to 49
+#  I've used Line 29to 32
 #  Accessed: [09/03/2025]
 # Endpoint to allow user registration (sign-up)
 class CreateUserView(generics.CreateAPIView):

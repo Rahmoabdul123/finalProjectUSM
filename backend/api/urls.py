@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 # Code reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More],
-# Author [Tech with Team], 
+# Author [Tech with Tim], 
 # Link of the video:[https://www.youtube.com/watch?v=c-QsfbznSXI]
 #  The layout of the urls was inspired from the video as he used views. in the url 
 

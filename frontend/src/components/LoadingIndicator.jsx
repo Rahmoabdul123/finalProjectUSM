@@ -1,5 +1,5 @@
 //  Code reused and adapted from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], 
-// Author :[Tech with Team]
+// Author :[Tech with Tim]
 // , [https://www.youtube.com/watch?v=c-QsfbznSXI]
 // I adapted from the video to create the loading indicator however I did use tailwind instead for the css
 

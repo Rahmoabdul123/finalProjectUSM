@@ -1,6 +1,6 @@
 import Form from "../components/Form"
 /**
-*Code reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team], [https://www.youtube.com/watch?v=c-QsfbznSXI]
+*Code reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Tim], [https://www.youtube.com/watch?v=c-QsfbznSXI]
 *  Accessed: [09/03/2025]
 */
 

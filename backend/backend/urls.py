@@ -20,7 +20,7 @@ from api.views import CreateUserView, ListUniversitiesView, CustomTokenObtainPai
 from rest_framework_simplejwt.views import TokenRefreshView
 # Code reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team], [https://www.youtube.com/watch?v=c-QsfbznSXI]
 #  The reused lines are Line 26,27,29,32,33
-#  Accessed: [date you watched it]
+#  Accessed: [09/03/2025]
 
 urlpatterns = [
     path("admin/", admin.site.urls),

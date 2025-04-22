@@ -21,7 +21,7 @@ import AllLeagues from "./pages/AllLeagues"
 import RedirectRole from "./components/RedirectRoles";
 import { Toaster } from 'react-hot-toast';
 //  Code inspired and reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], 
-// Author :[Tech with Team]
+// Author :[Tech with Tim]
 // , [https://www.youtube.com/watch?v=c-QsfbznSXI]
 //   I've followed the protectedRoute logic but I have reused Line 28 to 36 
 

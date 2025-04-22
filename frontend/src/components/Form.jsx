@@ -10,7 +10,7 @@ import LoadingIndicator from "./LoadingIndicator";
 import { Link } from "react-router-dom";
 
 //  Code inspired and reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], 
-// Author :[Tech with Team]
+// Author :[Tech with Tim]
 // , [https://www.youtube.com/watch?v=c-QsfbznSXI]
 // I adapted from the video to create the login page
 

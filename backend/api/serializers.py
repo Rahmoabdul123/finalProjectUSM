@@ -8,7 +8,7 @@ User = get_user_model()  # Get the custom user model
 
 # Code Inspired from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], [Tech with Team], [https://www.youtube.com/watch?v=c-QsfbznSXI]
 #  I were inspired by The Serializer template from the video and heavily edited mine
-#  Accessed: [date you watched it]
+#  Accessed: [09/03/2025]
 
 #Serializer for university 
 class UniversitySerializer(serializers.ModelSerializer):

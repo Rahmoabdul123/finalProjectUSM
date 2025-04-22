@@ -11,6 +11,6 @@ python-dotenv
 
 
 # //  Code reused from: [Django & React Web App Tutorial - Authentication, Databases, Deployment & More], 
-# // Author :[Tech with Team]
+# // Author :[Tech with Tim]
 # // , [https://www.youtube.com/watch?v=c-QsfbznSXI]
 # This file was used to create the requirement.txt to help download the backend
